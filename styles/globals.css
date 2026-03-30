@@ -1,0 +1,200 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 249 250 251; /* Off-white #F9FAFB */
+    --foreground: 15 23 42; /* Slate 900 */
+    
+    --bg-base: #F9FAFB; /* Clean light SaaS background */
+    
+    /* SaaS Primary: Professional Indigo */
+    --accent-primary: #4F46E5;
+    --accent-primary-hover: #4338CA;
+    --accent-primary-rgb: 79, 70, 229;
+    
+    /* SaaS Secondary: Soft Purple */
+    --accent-secondary: #7C3AED;
+    --accent-secondary-rgb: 124, 58, 237;
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--bg-base);
+    color: var(--foreground);
+    font-feature-settings: "rlig" 1, "calt" 1;
+    /* Soft, minimal radial gradient at top */
+    background-image: radial-gradient(circle at 50% -20%, rgba(79, 70, 229, 0.05), rgba(249, 250, 251, 1) 60%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@keyframes scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-scroll {
+  animation: scroll 40s linear infinite;
+}
+
+/* Modern SaaS Card Hover System - White background + soft shadow */
+.card-hover {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background-color: white;
+}
+
+.card-hover:hover {
+  border-color: rgba(var(--accent-primary-rgb), 0.2) !important;
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-4px);
+}
+
+.card-hover h3 {
+  transition: color 0.25s ease;
+}
+
+.card-hover:hover h3 {
+  color: var(--accent-primary) !important;
+}
+
+.card-hover img[style*="filter"],
+.card-hover Image[style*="filter"] {
+  transition: all 0.25s ease;
+}
+
+/* Cleaner filter (matches indigo #6366F1) */
+.card-hover:hover img[style*="filter"],
+.card-hover:hover Image[style*="filter"] {
+  filter: brightness(0) saturate(100%) invert(43%) sepia(51%) saturate(2252%) hue-rotate(219deg) brightness(101%) contrast(92%) !important;
+}
+
+.card-hover .card-icon-container {
+  transition: all 0.25s ease;
+}
+
+.card-hover:hover .card-icon-container {
+  border-color: rgba(var(--accent-primary-rgb), 0.2) !important;
+  background-color: rgba(var(--accent-primary-rgb), 0.05) !important;
+}
+
+/* Indigo-6366F1 approximate CSS filter */
+.icon-primary {
+  filter: brightness(0) saturate(100%) invert(43%) sepia(51%) saturate(2252%) hue-rotate(219deg) brightness(101%) contrast(92%);
+}
+
+/* Clean Icon container */
+.icon-container {
+  background-color: rgba(var(--accent-primary-rgb), 0.05);
+  border: 1px solid rgba(var(--accent-primary-rgb), 0.1);
+  border-radius: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+/* Very subtle grain */
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+.mobile-menu-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mobile-nav {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: left;
+  color: var(--foreground);
+}
+.mobile-nav-link {
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  text-align: left;
+  color: var(--foreground) !important;
+}
+
+/* Primary buttons with clean SaaS gradient / solid + minimal shadow */
+.cta-glow {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Apply SaaS style to direct children of cta-glow if they are buttons */
+.cta-glow > * {
+  background: var(--accent-primary) !important;
+  color: white !important;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  box-shadow: 0 4px 14px rgba(var(--accent-primary-rgb), 0.25) !important;
+  transition: all 0.2s ease !important;
+}
+
+.cta-glow > *:hover {
+  background: var(--accent-primary-hover) !important;
+  box-shadow: 0 6px 20px rgba(var(--accent-primary-rgb), 0.35) !important;
+  transform: translateY(-1px);
+}
+
+.cta-glow::before {
+  display: none; /* disable chaotic radial glow */
+}
+
+/* Subtle depth separation */
+.section-depth {
+  position: relative;
+}
+.section-depth::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(var(--accent-primary-rgb),0.02) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Clean forms */
+.apply-now-form select option,
+.apply-select-option {
+  background: white;
+  color: var(--foreground);
+}
+
+/* General Typography overrides for crisp rendering */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+}
+p {
+  letter-spacing: 0.01em;
+}
