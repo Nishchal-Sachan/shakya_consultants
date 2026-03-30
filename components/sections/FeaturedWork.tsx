@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Card from "@/components/ui/Card";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Section from "@/components/ui/Section";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function FeaturedWork({ className = "" }: { className?: string }) {
   const [projects, setProjects] = useState<any[]>([]);
@@ -14,12 +14,13 @@ export default function FeaturedWork({ className = "" }: { className?: string })
   const [error, setError] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   
-  // Carousel behavior
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
+    if (projects.length === 0) return;
     setActiveIndex((prev) => (prev + 1) % projects.length);
-  };
+  }, [projects.length]);
 
   const prevSlide = () => {
+    if (projects.length === 0) return;
     setActiveIndex((prev) => (prev - 1 + projects.length) % projects.length);
   };
 
@@ -43,97 +44,124 @@ export default function FeaturedWork({ className = "" }: { className?: string })
     fetchProjects();
   }, []);
 
-  // Auto-slide effect
   useEffect(() => {
-    if (projects.length > 0) {
-      const interval = setInterval(nextSlide, 5000);
+    if (projects.length > 1) {
+      const interval = setInterval(nextSlide, 8000);
       return () => clearInterval(interval);
     }
-  }, [projects.length]);
+  }, [projects.length, nextSlide]);
+
+  // Return null if no projects are present after loading (Admin-Only policy)
+  if (!loading && projects.length === 0) return null;
 
   return (
-    <Section id="work" className={`pt-24 pb-32 overflow-hidden ${className}`}>
-      <SectionHeading
-        label="Featured Work"
-        title="Our recent projects"
-        description="Explore our portfolio of successful digital products and solutions"
-        align="center"
-        className="mb-16"
-      />
+    <Section 
+      id="work" 
+      className={`relative py-16 overflow-hidden border-t border-border-subtle ${className}`}
+      style={{
+        background: `
+          radial-gradient(circle at 20% 20%, rgba(99,102,241,0.05), transparent 40%),
+          radial-gradient(circle at 80% 80%, rgba(139,92,246,0.05), transparent 40%),
+          #F8FAFC
+        `
+      }}
+    >
+      {/* Subtle Noise Texture */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay hero-grain"></div>
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <SectionHeading
+          label="Featured Work"
+          title="Our recent projects"
+          description="High-impact software solutions engineered for performance and scalability."
+          align="center"
+          className="mb-8"
+        />
 
-      {loading ? (
-        <div className="flex justify-center gap-6 md:gap-8">
-          {[1, 2, 3].map((n) => (
-            <div key={n} className="w-1/3 h-[400px] bg-gray-100 animate-pulse rounded-card"></div>
-          ))}
-        </div>
-      ) : error ? (
-        <div className="text-center py-20 text-red-500 font-semibold">{error}</div>
-      ) : projects.length === 0 ? (
-        <div className="text-center py-20 text-text-secondary">No projects available yet. Stay tuned!</div>
-      ) : (
-        <div className="relative">
-          {/* Slider Container */}
-          <div className="flex items-center justify-center relative min-h-[500px]">
-             {/* Carousel Wrapper */}
-             <div className="flex items-center justify-center w-full max-w-7xl mx-auto overflow-visible relative">
-                {/* Previous Button */}
-                <button 
+        {loading ? (
+          <div className="flex justify-center gap-6">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="w-full max-w-[380px] h-[480px] bg-white rounded-[2rem] animate-pulse border border-border-subtle"></div>
+            ))}
+          </div>
+        ) : error ? (
+          <div className="text-center py-20 text-red-500 font-semibold">{error}</div>
+        ) : (
+          <div className="relative">
+            {/* Carousel Container - Optimized Height */}
+            <div className="relative min-h-[480px] flex items-center justify-center">
+              
+              {/* Navigation - Better Positioning */}
+              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between z-30 pointer-events-none lg:-mx-10">
+                 <button 
                   onClick={prevSlide}
-                  aria-label="Previous Project"
-                  className="absolute left-4 z-20 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-lg border border-border-default hover:bg-accent-primary hover:text-white transition-all transform hover:scale-110"
+                  aria-label="Previous"
+                  className="pointer-events-auto w-12 h-12 bg-white/90 backdrop-blur-xl rounded-full shadow-premium border border-white items-center justify-center hidden md:flex hover:bg-accent-primary hover:text-white transition-all transform hover:scale-110 active:scale-95"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
+                  <ChevronLeft className="w-7 h-7" />
                 </button>
+                <button 
+                  onClick={nextSlide}
+                  aria-label="Next"
+                  className="pointer-events-auto w-12 h-12 bg-white/90 backdrop-blur-xl rounded-full shadow-premium border border-white items-center justify-center hidden md:flex hover:bg-accent-primary hover:text-white transition-all transform hover:scale-110 active:scale-95"
+                >
+                  <ChevronRight className="w-7 h-7" />
+                </button>
+              </div>
 
-                {/* Cards Wrapper */}
-                <div className="flex items-center justify-center w-full relative h-[600px] gap-8">
+              {/* Slider Viewport */}
+              <div className="relative w-full h-[460px] flex items-center justify-center perspective-1000">
                 {projects.map((project, index) => {
-                  // Calculate distance from active index with wrapping
                   let diff = index - activeIndex;
                   const length = projects.length;
-                  
-                  // Adjust for circular wraparound
                   if (diff > length / 2) diff -= length;
                   if (diff < -length / 2) diff += length;
 
-                  // Visibility logic: only show -1 (prev), 0 (active), 1 (next)
                   const isVisible = Math.abs(diff) <= 1;
                   if (!isVisible) return null;
-
                   const isActive = diff === 0;
 
                   return (
                     <div
                       key={project._id}
-                      className={`absolute transition-all duration-700 ease-out transform pointer-events-none md:pointer-events-auto w-[clamp(300px,80vw,450px)]
-                        ${isActive ? "z-10 scale-100 opacity-100 translate-x-0" : ""}
-                        ${diff === -1 ? "z-0 scale-90 opacity-40 -translate-x-[70%] md:-translate-x-[90%]" : ""}
-                        ${diff === 1 ? "z-0 scale-90 opacity-40 translate-x-[70%] md:translate-x-[90%]" : ""}
+                      className={`absolute transition-all duration-[800ms] cubic-bezier(0.23, 1, 0.32, 1) transform md:pointer-events-auto w-full max-w-[380px] md:max-w-[420px]
+                        ${isActive ? "z-20 scale-100 opacity-100 translate-x-0" : ""}
+                        ${diff === -1 ? "z-10 scale-[0.88] opacity-30 -translate-x-[75%] md:-translate-x-[95%] -rotate-y-12" : ""}
+                        ${diff === 1 ? "z-10 scale-[0.88] opacity-30 translate-x-[75%] md:translate-x-[95%] rotate-y-12" : ""}
                       `}
                     >
                       <Card
-                        hover={isActive}
-                        className={`p-0 flex flex-col h-full bg-white overflow-hidden group border border-border-default transition-shadow duration-500
-                          ${isActive ? "shadow-glow-primary-soft" : "shadow-none pointer-events-none"}
+                        className={`p-0 bg-white overflow-hidden group transition-all duration-500 rounded-[2rem] border-white/50
+                          ${isActive ? "shadow-[0_30px_70px_-15px_rgba(0,0,0,0.1)] md:hover:-translate-y-3" : "shadow-none pointer-events-none opacity-50"}
                         `}
                       >
-                        {/* Project Image */}
-                        <div className="relative w-full h-56 md:h-64 overflow-hidden">
+                        {/* Compact Image - 16/10 Aspect Ratio */}
+                        <div className="relative w-full aspect-[16/10] overflow-hidden bg-bg-soft">
                           <Image
                             src={project.imageUrl}
                             alt={project.title}
                             fill
-                            className={`object-cover transition-transform duration-700 ${isActive ? "group-hover:scale-110" : ""}`}
+                            className={`object-cover transition-transform duration-[1s] ${isActive ? "group-hover:scale-105" : ""}`}
+                            sizes="(max-width: 768px) 100vw, 420px"
                           />
+                          {isActive && (
+                            <div className="absolute top-5 left-5 z-10 px-3 py-1 rounded-lg bg-accent-primary text-white text-[9px] font-black uppercase tracking-wider shadow-lg transform -translate-y-[200%] group-hover:translate-y-0 transition-all duration-500">
+                              Selected Work
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-text-primary/70 via-transparent to-transparent opacity-60"></div>
                         </div>
 
-                        {/* Content */}
-                        <div className="p-8 flex flex-col flex-grow">
-                          <h3 className={`text-2xl font-bold text-text-primary mb-3 transition-colors duration-300 ${isActive ? "group-hover:text-accent-primary" : ""}`}>
+                        {/* Refined Content Area */}
+                        <div className="p-7 md:p-9 bg-white relative z-10">
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="text-[9px] font-black text-accent-primary uppercase tracking-[0.2em]">
+                              {project.category || "Development"}
+                            </span>
+                          </div>
+                          <h3 className="text-xl md:text-2xl font-extrabold text-text-primary mb-3 leading-tight group-hover:text-accent-primary transition-colors">
                             {project.title}
                           </h3>
-                          <p className={`text-text-secondary text-sm leading-relaxed mb-8 flex-grow ${isActive ? "line-clamp-3" : "line-clamp-2"}`}>
+                          <p className="text-text-muted text-sm md:text-base leading-relaxed mb-7 line-clamp-2">
                             {project.description}
                           </p>
                           
@@ -142,10 +170,10 @@ export default function FeaturedWork({ className = "" }: { className?: string })
                               href={project.projectLink}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center text-accent-primary font-bold text-xs tracking-widest uppercase group/link mt-auto transition-all duration-300 transform group-hover:translate-x-2"
+                              className="inline-flex items-center gap-2 text-accent-primary font-black text-[10px] tracking-widest uppercase hover:text-text-primary transition-all duration-300"
                             >
-                              Launch Project
-                              <svg className="ml-3 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                              Explore Study
+                              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                             </a>
                           )}
                         </div>
@@ -153,42 +181,33 @@ export default function FeaturedWork({ className = "" }: { className?: string })
                     </div>
                   );
                 })}
-                </div>
+              </div>
+            </div>
 
-                {/* Next Button */}
-                <button 
-                  onClick={nextSlide}
-                  aria-label="Next Project"
-                  className="absolute right-4 z-20 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-lg border border-border-default hover:bg-accent-primary hover:text-white transition-all transform hover:scale-110"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
-                </button>
-             </div>
+            {/* Compact Indicators */}
+            <div className="flex justify-center items-center gap-3 mt-8">
+              {projects.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveIndex(i)}
+                  className={`h-1.5 rounded-full transition-all duration-500 
+                    ${i === activeIndex ? "w-10 bg-accent-primary shadow-sm" : "w-1.5 bg-gray-300 hover:bg-gray-400"}`}
+                />
+              ))}
+            </div>
           </div>
+        )}
 
-          {/* Dots Indicator */}
-          <div className="flex justify-center gap-3 mt-12">
-            {projects.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveIndex(i)}
-                aria-label={`Go to project ${i + 1}`}
-                className={`h-2 transition-all duration-300 rounded-full ${i === activeIndex ? "w-10 bg-accent-primary shadow-glow-primary-soft" : "w-2 bg-gray-300 hover:bg-gray-400"}`}
-              />
-            ))}
-          </div>
+        {/* Scaled-down CTA */}
+        <div className="text-center mt-12">
+          <Link
+            href="/projects"
+            className="inline-flex items-center gap-3 bg-white border border-border-default text-text-primary font-bold py-4 px-10 rounded-full shadow-card-shadow hover:shadow-premium hover:-translate-y-1 transition-all duration-300 group/link"
+          >
+            <span className="text-xs tracking-widest uppercase">View Full Archive</span>
+            <ArrowRight className="w-4 h-4 transition-transform group-hover/link:translate-x-1" />
+          </Link>
         </div>
-      )}
-
-      {/* CTA Section */}
-      <div className="text-center mt-20">
-        <Link
-          href="/projects"
-          className="cta-glow inline-flex items-center group bg-accent-primary text-white font-bold py-4 px-10 rounded-full shadow-glow-primary-soft hover:shadow-glow-primary hover:-translate-y-1 transition-all duration-300"
-        >
-          See All Project Archive
-          <ArrowRight className="w-4 h-4" />
-        </Link>
       </div>
     </Section>
   );

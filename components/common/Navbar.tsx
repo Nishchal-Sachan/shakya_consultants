@@ -2,7 +2,10 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useBookingModal } from "@/context/BookingModalContext";
+
+import Button from "@/components/ui/Button";
 
 const MENU_ANIMATION_MS = 250;
 const FOCUSABLE_SELECTOR =
@@ -14,13 +17,14 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "Work", href: "#work" },
-  { label: "Capabilities", href: "#capabilities" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "About", href: "#about" },
-  { label: "Resources", href: "#faq" },
-  { label: "Contact Us", href: "#contact" },
+  { label: "Work", href: "/#work" },
+  { label: "Capabilities", href: "/#capabilities" },
+  { label: "Pricing", href: "/#pricing" },
+  { label: "About", href: "/#about" },
+  { label: "Resources", href: "/#faq" },
+  { label: "Contact Us", href: "/#contact" },
 ];
+
 
 export default function Navbar() {
   const { openBooking, openApplyModal } = useBookingModal();
@@ -52,13 +56,21 @@ export default function Navbar() {
   }, []);
 
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    // If we're not on the homepage and the link is a hashtag, let the default Link behavior take over to go to homepage
+    if (window.location.pathname !== "/") {
+      return; // Regular link behavior will navigate to /#section
     }
-    setIsMobileMenuOpen(false);
+
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      setIsMobileMenuOpen(false);
+    }
   };
+
 
   const closeMobileMenu = useCallback(() => {
     if (!isMobileMenuOpen && !isMenuClosing) return;
@@ -123,20 +135,21 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className="fixed top-0 left-0 right-0 z-[9998] transition-all duration-300 h-[72px] bg-white/80 backdrop-blur-xl border-b border-black/5 shadow-[0_1px_10px_rgba(0,0,0,0.02)]"
+        className="fixed top-0 left-0 right-0 z-[9998] transition-all duration-300 h-[64px] bg-white/70 backdrop-blur-[12px] border-b border-black/[0.05] shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between h-[72px]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 h-full">
+          <div className="flex items-center justify-between h-full">
             {/* Logo */}
-            <a
-              href="#hero"
+            <Link
+              href="/#hero"
               onClick={(e) => handleSmoothScroll(e, "#hero")}
-              className="flex items-center focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2 focus:ring-offset-white rounded-md text-lg text-text-primary space-x-2"
+
+              className="flex items-center focus:outline-none rounded-md text-lg text-text-primary space-x-2"
             >
-              <div className="text-xl font-bold tracking-tighter shrink-0 flex items-center h-14 w-auto">
+              <div className="text-xl font-bold tracking-tighter shrink-0 flex items-center h-10 w-auto">
                 <span className="text-accent-primary mr-1">Shakya</span> <span className="text-text-primary">Consultants</span>
               </div>
-            </a>
+            </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
@@ -147,13 +160,13 @@ export default function Navbar() {
                     key={item.href}
                     href={item.href}
                     onClick={(e) => handleSmoothScroll(e, item.href)}
-                    className={`font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2 focus:ring-offset-bg-base rounded-md px-2 py-1 relative group text-sm ${
-                      isActive ? "text-accent-primary" : "text-slate-600 hover:text-accent-primary"
+                    className={`font-bold transition-all duration-300 focus:outline-none rounded-md px-2 py-1 relative group text-[11px] uppercase tracking-[0.2em] nav-link-lift hover:-translate-y-0.5 ${
+                      isActive ? "text-accent-primary" : "text-slate-500 hover:text-accent-primary"
                     }`}
                   >
                     {item.label}
-                    <span className={`absolute bottom-0 left-0 h-0.5 bg-accent-primary transition-all duration-200 ${
-                      isActive ? "w-full" : "w-0 group-hover:w-full"
+                    <span className={`absolute -bottom-1 left-0 h-[2.5px] bg-gradient-to-r from-accent-primary to-purple-600 transition-all duration-300 rounded-full shadow-[0_1px_4px_rgba(79,70,229,0.3)] ${
+                      isActive ? "w-full opacity-100" : "w-0 opacity-0 group-hover:w-full group-hover:opacity-100"
                     }`}></span>
                   </a>
                 );
@@ -162,16 +175,16 @@ export default function Navbar() {
 
             {/* CTA Button — opens Join Our Team modal */}
             <div className="hidden md:block">
-              <button
-                type="button"
+              <Button
+                variant="primary"
+                size="sm"
                 onClick={() => {
                   openApplyModal();
                   closeMobileMenu();
                 }}
-                className="inline-flex items-center justify-center font-bold transition-all duration-300 rounded-button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-primary focus:ring-offset-white px-5 py-2.5 text-sm text-white bg-accent-primary hover:bg-accent-primary-hover shadow-glow-primary hover:shadow-glow-primary-soft"
               >
                 Join Our Team
-              </button>
+              </Button>
             </div>
 
             {/* Mobile Menu Button — ensure always clickable above page content */}

@@ -7,7 +7,7 @@ import Card from '@/components/ui/Card';
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'projects' | 'clients'>('projects');
+  const [activeTab, setActiveTab] = useState<'projects' | 'clients' | 'testimonials'>('projects');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -15,6 +15,7 @@ export default function AdminDashboard() {
   // Data states
   const [projects, setProjects] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
+  const [testimonials, setTestimonials] = useState<any[]>([]);
 
   // Form states - Projects
   const [projectForm, setProjectForm] = useState({
@@ -30,6 +31,16 @@ export default function AdminDashboard() {
     logo: null as File | null,
   });
 
+  // Form states - Testimonials
+  const [testimonialForm, setTestimonialForm] = useState({
+    name: '',
+    role: '',
+    company: '',
+    message: '',
+    rating: 5,
+    image: null as File | null,
+  });
+
   // Helper to get token
   const getAuthToken = () => localStorage.getItem('adminToken');
 
@@ -41,6 +52,7 @@ export default function AdminDashboard() {
     } else {
       fetchProjects();
       fetchClients();
+      fetchTestimonials();
     }
   }, [router]);
 
@@ -66,6 +78,16 @@ export default function AdminDashboard() {
       if (data.success) setClients(data.data);
     } catch (err) {
       console.error('Failed to fetch clients');
+    }
+  };
+
+  const fetchTestimonials = async () => {
+    try {
+      const res = await fetch('/api/testimonials');
+      const data = await res.json();
+      if (data.success) setTestimonials(data.data);
+    } catch (err) {
+      console.error('Failed to fetch testimonials');
     }
   };
 
@@ -147,6 +169,48 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleTestimonialSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    const token = getAuthToken();
+    if (!token) return router.push('/admin/login');
+
+    try {
+      const formData = new FormData();
+      formData.append('name', testimonialForm.name);
+      formData.append('role', testimonialForm.role);
+      formData.append('company', testimonialForm.company);
+      formData.append('message', testimonialForm.message);
+      formData.append('rating', testimonialForm.rating.toString());
+      if (testimonialForm.image) formData.append('image', testimonialForm.image);
+
+      const res = await fetch('/api/testimonials', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setSuccess('Testimonial added successfully!');
+        setTestimonialForm({ name: '', role: '', company: '', message: '', rating: 5, image: null });
+        fetchTestimonials();
+      } else {
+        setError(data.error || 'Failed to add testimonial');
+        if (res.status === 401) handleLogout();
+      }
+    } catch (err) {
+      setError('Form submission failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const deleteProject = async (id: string) => {
     if (!confirm('Are you sure you want to delete this project?')) return;
     
@@ -195,6 +259,30 @@ export default function AdminDashboard() {
     }
   };
 
+  const deleteTestimonial = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this testimonial?')) return;
+
+    const token = getAuthToken();
+    if (!token) return router.push('/admin/login');
+
+    try {
+      const res = await fetch(`/api/testimonials/${id}`, { 
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        }
+      });
+      const data = await res.json();
+      if (data.success) {
+          fetchTestimonials();
+      } else {
+          if (res.status === 401) handleLogout();
+      }
+    } catch (err) {
+      alert('Deletion failed');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-bg-base p-8">
       <div className="max-w-6xl mx-auto">
@@ -222,6 +310,12 @@ export default function AdminDashboard() {
           >
             Clients
           </Button>
+          <Button
+            variant={activeTab === 'testimonials' ? 'primary' : 'secondary'}
+            onClick={() => setActiveTab('testimonials')}
+          >
+            Testimonials
+          </Button>
         </div>
 
         {/* Feedback Messages */}
@@ -235,10 +329,10 @@ export default function AdminDashboard() {
           <div className="lg:col-span-1">
             <Card className="p-6">
               <h2 className="text-xl font-bold mb-6">
-                {activeTab === 'projects' ? 'Add New Project' : 'Add New Client'}
+                {activeTab === 'projects' ? 'Add New Project' : activeTab === 'clients' ? 'Add New Client' : 'Add New Testimonial'}
               </h2>
               
-              {activeTab === 'projects' ? (
+              {activeTab === 'projects' && (
                 <form onSubmit={handleProjectSubmit} className="space-y-4">
                   <div>
                     <label htmlFor="project-title" className="block text-sm font-medium mb-1">Title</label>
@@ -292,7 +386,9 @@ export default function AdminDashboard() {
                     {loading ? 'Uploading...' : 'Add Project'}
                   </Button>
                 </form>
-              ) : (
+              )}
+
+              {activeTab === 'clients' && (
                 <form onSubmit={handleClientSubmit} className="space-y-4">
                   <div>
                     <label htmlFor="client-name" className="block text-sm font-medium mb-1">Client Name</label>
@@ -323,13 +419,96 @@ export default function AdminDashboard() {
                   </Button>
                 </form>
               )}
+
+              {activeTab === 'testimonials' && (
+                <form onSubmit={handleTestimonialSubmit} className="space-y-4">
+                  <div>
+                    <label htmlFor="test-name" className="block text-sm font-medium mb-1">Name</label>
+                    <input
+                      id="test-name"
+                      type="text"
+                      placeholder="Client Name"
+                      className="w-full p-2 border border-border-default rounded"
+                      value={testimonialForm.name}
+                      onChange={(e) => setTestimonialForm({ ...testimonialForm, name: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="test-role" className="block text-sm font-medium mb-1">Role</label>
+                      <input
+                        id="test-role"
+                        type="text"
+                        placeholder="CEO, Founder, etc."
+                        className="w-full p-2 border border-border-default rounded"
+                        value={testimonialForm.role}
+                        onChange={(e) => setTestimonialForm({ ...testimonialForm, role: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="test-company" className="block text-sm font-medium mb-1">Company</label>
+                      <input
+                        id="test-company"
+                        type="text"
+                        placeholder="Company Name"
+                        className="w-full p-2 border border-border-default rounded"
+                        value={testimonialForm.company}
+                        onChange={(e) => setTestimonialForm({ ...testimonialForm, company: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="test-msg" className="block text-sm font-medium mb-1">Message</label>
+                    <textarea
+                      id="test-msg"
+                      placeholder="Testimonial message..."
+                      className="w-full p-2 border border-border-default rounded"
+                      rows={3}
+                      value={testimonialForm.message}
+                      onChange={(e) => setTestimonialForm({ ...testimonialForm, message: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="test-rating" className="block text-sm font-medium mb-1">Rating</label>
+                      <select
+                        id="test-rating"
+                        className="w-full p-2 border border-border-default rounded"
+                        value={testimonialForm.rating}
+                        onChange={(e) => setTestimonialForm({ ...testimonialForm, rating: Number(e.target.value) })}
+                      >
+                        {[5, 4, 3, 2, 1].map((r) => (
+                          <option key={r} value={r}>{r} Stars</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="test-image" className="block text-sm font-medium mb-1">Profile Image</label>
+                      <input
+                        id="test-image"
+                        type="file"
+                        title="Upload profile image"
+                        accept="image/*"
+                        className="w-full text-xs mt-1"
+                        onChange={(e) => setTestimonialForm({ ...testimonialForm, image: e.target.files?.[0] || null })}
+                      />
+                    </div>
+                  </div>
+                  <Button className="w-full" disabled={loading}>
+                    {loading ? 'Uploading...' : 'Add Testimonial'}
+                  </Button>
+                </form>
+              )}
             </Card>
           </div>
 
           {/* List Section */}
           <div className="lg:col-span-2">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {activeTab === 'projects' ? (
+              {/* Projects List */}
+              {activeTab === 'projects' && (
                 projects.length > 0 ? (
                   projects.map((p) => (
                     <Card key={p._id} className="p-4 flex flex-col overflow-hidden">
@@ -352,7 +531,10 @@ export default function AdminDashboard() {
                 ) : (
                   <p className="col-span-2 text-center py-10 text-text-secondary">No projects found.</p>
                 )
-              ) : (
+              )}
+
+              {/* Clients List */}
+              {activeTab === 'clients' && (
                 clients.length > 0 ? (
                   clients.map((c) => (
                     <Card key={c._id} className="p-4 flex items-center justify-between">
@@ -372,6 +554,47 @@ export default function AdminDashboard() {
                   ))
                 ) : (
                   <p className="col-span-2 text-center py-10 text-text-secondary">No clients found.</p>
+                )
+              )}
+
+              {/* Testimonials List */}
+              {activeTab === 'testimonials' && (
+                testimonials.length > 0 ? (
+                  testimonials.map((t) => (
+                    <Card key={t._id} className="p-4 flex flex-col overflow-hidden">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 bg-gray-100 rounded-full overflow-hidden border">
+                          {t.imageUrl ? (
+                            <img src={t.imageUrl} alt={t.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-accent-primary text-white font-bold text-lg">
+                              {t.name.charAt(0)}
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="font-bold">{t.name}</h3>
+                          <p className="text-xs text-text-secondary">{t.role}{t.company ? ` at ${t.company}` : ''}</p>
+                        </div>
+                      </div>
+                      <div className="text-yellow-500 mb-2 flex">
+                        {'★'.repeat(t.rating)}{'☆'.repeat(5 - t.rating)}
+                      </div>
+                      <p className="text-sm text-text-secondary line-clamp-3 italic mb-4">
+                        &quot;{t.message}&quot;
+                      </p>
+                      <div className="mt-auto flex justify-end">
+                        <button 
+                          onClick={() => deleteTestimonial(t._id)}
+                          className="text-red-500 hover:text-red-700 text-sm font-medium"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </Card>
+                  ))
+                ) : (
+                  <p className="col-span-2 text-center py-10 text-text-secondary">No testimonials found.</p>
                 )
               )}
             </div>

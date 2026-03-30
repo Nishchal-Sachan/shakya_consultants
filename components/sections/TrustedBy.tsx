@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import Marquee from "@/components/ui/Marquee";
 import Section from "@/components/ui/Section";
 
 export default function TrustedBy({ className = "" }: { className?: string }) {
-  const [logos, setLogos] = useState<any[]>([]);
+  const [clients, setClients] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,7 +14,17 @@ export default function TrustedBy({ className = "" }: { className?: string }) {
         const res = await fetch("/api/clients");
         const data = await res.json();
         if (data.success) {
-          setLogos(data.data);
+          // DEBUG CHECK: Ensure all expected logos are present
+          console.log("Client Logos Data:", data.data);
+          
+          // Remove potential duplicates and empty logos in UI for safety
+          const uniqueClients = data.data.filter((client: any, index: number, self: any[]) =>
+            client.logoUrl && 
+            client.name && 
+            self.findIndex(c => c.logoUrl === client.logoUrl || c.name === client.name) === index
+          );
+          
+          setClients(uniqueClients);
         }
       } catch (err) {
         console.error("Failed to fetch clients logos");
@@ -27,58 +36,100 @@ export default function TrustedBy({ className = "" }: { className?: string }) {
     fetchClients();
   }, []);
 
-  // Map to format UI expects (logoUrl -> src, name -> alt)
-  const formattedLogos = logos.map((c) => ({
+  const formattedClients = clients.map((c) => ({
     src: c.logoUrl,
     alt: c.name,
   }));
 
-  // Fallback logos if DB is empty, or show empty during loading
-  const displayLogos =
-    formattedLogos.length > 0 ? formattedLogos : [];
+  if (!loading && formattedClients.length === 0) {
+    return null;
+  }
+
+  // Consistent Card UI - Fixed size and alignment
+  const LogoCard = ({ logo }: { logo: { src: string, alt: string } }) => (
+    <div className="
+      relative flex items-center justify-center 
+      w-40 md:w-52 h-20 md:h-24 
+      px-7 py-5 rounded-xl bg-white
+      border border-black/[0.03] shadow-md
+      flex-shrink-0
+      transition-all duration-300 ease-out
+      hover:scale-105 hover:shadow-lg hover:z-10
+    ">
+      <div className="relative w-full h-full flex items-center justify-center">
+        <Image
+          src={logo.src}
+          alt={logo.alt}
+          width={140}
+          height={56}
+          className="max-h-full max-w-full w-auto h-auto object-contain pointer-events-none select-none"
+        />
+      </div>
+    </div>
+  );
+
+  // Single Source of Truth for both rows
+  const marqueeData = [...formattedClients, ...formattedClients, ...formattedClients, ...formattedClients];
 
   return (
     <Section
       id="trusted"
-      className={`py-12 md:py-16 overflow-hidden bg-white border-y border-border-default ${className}`}
+      className={`relative py-16 overflow-hidden border-y border-black/[0.03] bg-base ${className}`}
+      style={{
+        background: `
+          radial-gradient(circle at 10% 20%, rgba(99,102,241,0.03), transparent 40%),
+          radial-gradient(circle at 90% 80%, rgba(139,92,246,0.03), transparent 40%),
+          #F8FAFC
+        `
+      }}
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-          {/* Left Side Text */}
-          <div className="flex-shrink-0">
-            <p className="text-xs md:text-sm font-semibold text-text-secondary uppercase tracking-widest whitespace-nowrap">
-              Trusted by industry leaders
-            </p>
-          </div>
+      {/* Subtle Noise Texture */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay hero-grain"></div>
+      {/* Visual Depth Glow */}
+      <div className="absolute inset-0 blur-3xl opacity-5 pointer-events-none z-0 bg-accent-primary/10"></div>
 
-          {/* Scrolling Logo Strip */}
-          {loading ? (
-            <div className="flex-1 flex gap-8 h-8 opacity-20">
-              {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="w-24 h-4 bg-gray-400 rounded-full animate-pulse"></div>
-              ))}
-            </div>
-          ) : (
-            displayLogos.length > 0 && (
-              <Marquee className="flex-1 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                {displayLogos.map((logo, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-center flex-shrink-0"
-                  >
-                    <Image
-                      src={logo.src}
-                      alt={logo.alt}
-                      width={120}
-                      height={40}
-                      className="h-8 w-auto object-contain mx-8"
-                    />
-                  </div>
-                ))}
-              </Marquee>
-            )
-          )}
+      <div className="container mx-auto px-4 md:px-8 mb-10 text-center space-y-4 relative z-10">
+        <div className="inline-flex items-center px-4 py-2 rounded-full bg-white border border-border-default shadow-sm">
+          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-accent-primary">
+            Trusted Partners
+          </span>
         </div>
+        <h2 className="text-3xl md:text-5xl font-black text-text-primary tracking-tighter leading-[1.1] max-w-3xl mx-auto">
+          Fueling the next generation <br className="hidden md:block" />
+          of digital disruptors
+        </h2>
+      </div>
+
+      <div className="relative space-y-8 z-10">
+        {/* Edge Fade Masks - Matched to Soft Neutral Gray */}
+        <div className="absolute left-0 top-0 bottom-0 w-32 md:w-64 bg-gradient-to-r from-[#F8FAFC] via-[#F8FAFC]/60 to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-32 md:w-64 bg-gradient-to-l from-[#F8FAFC] via-[#F8FAFC]/60 to-transparent z-10 pointer-events-none"></div>
+
+        {loading ? (
+          <div className="flex justify-center gap-10 overflow-hidden px-4 animate-pulse">
+            {[1, 2, 3, 4, 5].map(n => <div key={n} className="w-52 h-24 bg-white rounded-xl shadow-sm border border-border-default" />)}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-8">
+            {/* Row 1 - Scroll Left */}
+            <div className="overflow-hidden w-full">
+              <div className="flex flex-nowrap w-max gap-6 animate-marquee pause-on-hover px-4">
+                {marqueeData.map((logo, index) => (
+                  <LogoCard key={`row1-${index}`} logo={logo} />
+                ))}
+              </div>
+            </div>
+
+            {/* Row 2 - Scroll Right */}
+            <div className="overflow-hidden w-full">
+              <div className="flex flex-nowrap w-max gap-6 animate-marquee-reverse pause-on-hover px-4">
+                {marqueeData.map((logo, index) => (
+                  <LogoCard key={`row2-${index}`} logo={logo} />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Section>
   );

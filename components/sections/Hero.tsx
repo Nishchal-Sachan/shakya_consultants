@@ -6,6 +6,7 @@ import Button from "@/components/ui/Button";
 import { useBookingModal } from "@/context/BookingModalContext";
 import React from "react";
 import Image from "next/image";
+import { Star } from "lucide-react";
 
 export default function Hero() {
   const { openBooking } = useBookingModal();
@@ -21,99 +22,136 @@ export default function Hero() {
     }
   };
 
+  const avatars = [
+    "https://i.pravatar.cc/150?u=a",
+    "https://i.pravatar.cc/150?u=b",
+    "https://i.pravatar.cc/150?u=c",
+  ];
+
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center pt-20"
+      className="relative min-h-[85vh] flex items-center pt-16 md:pt-20 lg:pt-24 overflow-hidden bg-[#F8F9FC]"
     >
-      {/* Background Video */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-20 select-none pointer-events-none"
-        >
-          <source
-            src="https://cdn.prod.website-files.com/67891e6f0e36bb3d6b889a35%2F67ee4d8cddfdf869c212628c_roro-video-hero-001-vt-transcode.mp4"
-            type="video/mp4"
-          />
-        </video>
-        {/* Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-bg-base/40 via-bg-base/60 to-bg-base"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(79,70,229,0.06),transparent_50%)]"></div>
-        {/* Grain/Noise Overlay */}
-        <div className="hero-grain"></div>
+      {/* --- LAYERED DEPTH BACKGROUND ARCHITECTURE --- */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        
+        {/* Layer 1: Intentional Grid System (Fading Left TO Right) */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(99,102,241,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,0.05)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:linear-gradient(to_right,transparent_10%,black_100%)] opacity-20"></div>
+        
+        {/* Layer 2: Radial Glow LEFT (Very Subtle) */}
+        <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] bg-indigo-500/[0.05] rounded-full blur-[120px]"></div>
+        
+        {/* Layer 3: High-Intensity Radial Glow RIGHT (Directly behind Calendar) */}
+        <div className="absolute top-1/2 right-[10%] -translate-y-1/2 w-[600px] h-[600px] bg-accent-primary/[0.12] rounded-full blur-[140px] animate-pulse"></div>
+
+        {/* Layer 4: Noise Grain */}
+        <div className="hero-grain opacity-[0.02]"></div>
+
+        {/* Vignette for elite feel */}
+        <div className="vignette-overlay opacity-40"></div>
       </div>
 
-      {/* Content: 2-column on desktop, stacked on mobile */}
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 overflow-x-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 xl:gap-20 items-center">
-          {/* Left: hero text */}
-          <div className="max-w-3xl text-center lg:text-left">
-            {/* Badge / Pill */}
-            <div className="inline-flex items-center px-4 py-2 rounded-full mb-8 bg-accent-primary-muted border border-accent-primary/20 text-accent-primary shadow-sm">
-              <span className="text-xs md:text-sm font-bold uppercase tracking-[0.2em]">
-                SOFTWARE ENGINEERING CONSULTANCY
-              </span>
+      {/* --- HERO CONTENT WRAPPED IN NEW CONTAINER SYSTEM --- */}
+      <div className="hero-container py-12 md:py-24">
+        <div className="hero-grid">
+          
+          {/* Left Block: Strategic Messaging */}
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left transition-all duration-700">
+            {/* Elite Badge - Upgraded for Hierarchy */}
+            <div className="reveal reveal-visible stagger-1 inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-8 bg-white border border-black/[0.04] shadow-sm backdrop-blur-md">
+               <div className="w-2 h-2 rounded-full bg-accent-primary animate-pulse shadow-[0_0_8px_rgba(79,70,229,0.5)]"></div>
+               <span className="text-[10px] font-black uppercase tracking-[0.25em] text-text-primary/70">
+                 Premier Software Engineering
+               </span>
             </div>
 
-            {/* Headline */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-text-primary mb-8 font-bold leading-[1.1] tracking-tight">
-              We engineer{" "}
-              <span className="text-accent-primary">scalable software</span>
-              <br />
-              that transforms <span className="text-accent-primary">enterprises</span>
+            {/* Headline: Masterpiece Component */}
+            <h1 className="reveal reveal-visible stagger-2 text-5xl md:text-7xl lg:text-8xl text-text-primary mb-6 font-bold leading-[1.05] tracking-[-0.5px]">
+              We engineer <br className="hidden md:block" />
+              <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#6366F1] via-[#8B5CF6] to-[#4F46E5] bg-[length:200%_auto] animate-gradient-shift">
+                 scalable software
+                 <span className="absolute bottom-0 left-0 w-full h-[6px] bg-accent-primary/10 rounded-full blur-[8px] -z-10"></span>
+              </span> <br className="hidden md:block" />
+              that wins markets
             </h1>
 
-            {/* Subtext */}
-            <p className="text-lg md:text-xl lg:text-2xl text-text-secondary leading-relaxed mb-10 max-w-2xl mx-auto lg:mx-0">
-              Leveraging intelligent architectures to deliver robust cloud-native systems for modern digital economies.
+            {/* Subtext: Focused & Readable */}
+            <p className="reveal reveal-visible stagger-3 text-lg md:text-[18px] text-[#6B7280] leading-[1.6] mb-10 max-w-[520px] font-medium">
+               Transforming innovative digital ideas into robust <span className="text-text-primary font-bold">enterprise systems</span> through world-class engineering and cloud-native architecture.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
-              {/* Primary Button — opens booking modal */}
-              <div className="cta-glow">
-                <Button
-                  onClick={openBooking}
+            {/* CTA Layer - Precise Spacing */}
+            <div className="reveal reveal-visible stagger-4 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mt-2">
+               <Button
+                  variant="primary"
                   size="lg"
+                  onClick={openBooking}
                   className="w-full sm:w-auto min-w-[220px]"
-                >
-                  Schedule Consultation
-                </Button>
-              </div>
-              {/* Secondary Button */}
-              <a
-                href="#capabilities"
-                onClick={(e) => handleSmoothScroll(e, "#capabilities")}
-                className="group inline-flex items-center justify-center font-bold transition-all duration-300 rounded-button px-8 py-4 text-base text-text-primary border border-border-default bg-white hover:border-accent-primary hover:text-accent-primary shadow-sm"
-              >
-                Our services
-                <Image 
-                  src="/assets/icon-arrow-right.svg" 
-                  alt="" 
-                  width={20} 
-                  height={20} 
-                  className="ml-2 w-5 h-5 icon-primary group-hover:translate-x-1 transition-transform" 
-                />
-              </a>
+               >
+                  Book a call
+               </Button>
+               
+               <a
+                  href="#work"
+                  onClick={(e) => handleSmoothScroll(e, "#work")}
+                  className="w-full sm:w-auto"
+               >
+                  <Button
+                     variant="secondary"
+                     size="lg"
+                     className="w-full sm:w-auto min-w-[220px] bg-white hover:bg-slate-50 border-black/[0.08]"
+                  >
+                     View our work
+                  </Button>
+               </a>
+            </div>
+
+            {/* UPGRADED Trust Strip (Bottom Left) */}
+            <div className="reveal reveal-visible stagger-5 mt-10 pt-10 border-t border-black/[0.04] flex items-center gap-5">
+               <div className="flex -space-x-3">
+                  {avatars.map((url, i) => (
+                     <div key={i} className="relative w-8 h-8 rounded-full border-2 border-white shadow-sm overflow-hidden bg-slate-100">
+                        <img src={url} alt={`Avatar ${i}`} className="w-full h-full object-cover" />
+                     </div>
+                  ))}
+               </div>
+               <div className="flex flex-col text-left">
+                  <div className="flex items-center gap-1">
+                     <div className="flex gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                           <Star key={i} size={10} className="fill-yellow-400 text-yellow-400" />
+                        ))}
+                     </div>
+                     <span className="text-[11px] font-bold text-text-primary tracking-tight">Rated 5.0/5.0</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-text-muted/60 uppercase tracking-widest">
+                     By <span className="text-text-primary">20+</span> High-Growth Teams
+                  </span>
+               </div>
             </div>
           </div>
 
-          {/* Right: booking widget */}
-          <div className="relative w-full flex items-center justify-center lg:justify-end py-8 order-2 lg:order-none">
-            <div className="absolute inset-0 bg-accent-primary/5 rounded-full blur-[120px] -z-10"></div>
-            <div
-              className="w-full max-w-md mx-auto lg:mr-0 animate-in fade-in slide-in-from-bottom-8 duration-1000"
-              aria-label="Booking widget"
-            >
-              <BookingCard>
-                <BookingCalendarWidget />
-              </BookingCard>
+          {/* Right side: Floating glassmorphism booking card centered for balance */}
+          <div className="reveal reveal-visible stagger-6 relative w-full flex items-center justify-center lg:justify-end min-w-0">
+            {/* Visual halo behind the asset - contained to prevent horizontal scroll */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent-primary/5 rounded-full blur-[100px] -z-10 animate-pulse pointer-events-none"></div>
+            
+            <div className="w-full max-w-[480px] animate-float relative z-10">
+               <div className="relative group transition-all duration-700">
+                 {/* High-intensity halo glow on hover */}
+                 <div className="absolute -inset-10 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-[40px] blur-[80px] opacity-0 group-hover:opacity-60 transition-opacity duration-1000"></div>
+                 
+                 <BookingCard 
+                   className="relative shadow-none border-none overflow-hidden" 
+                   brandName="Shakya"
+                 >
+                   <BookingCalendarWidget />
+                 </BookingCard>
+               </div>
             </div>
           </div>
+
         </div>
       </div>
     </section>

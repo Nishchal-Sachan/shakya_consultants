@@ -24,14 +24,47 @@ function sanitizeInput(s: string, maxLen: number): string {
 
 const ROLE_OPTIONS = [
   { value: "", label: "Select role..." },
-  { value: "software-engineer", label: "Software Engineer" },
-  { value: "product-manager", label: "Product Manager" },
-  { value: "designer", label: "Designer" },
-  { value: "data-scientist", label: "Data Scientist" },
-  { value: "devops", label: "DevOps / Infrastructure" },
-  { value: "sales-associate", label: "Sales Associate" },
+  // Front Office / Admin
+  { value: "receptionist", label: "Receptionist / Front Desk Executive" },
+  { value: "back-office-executive", label: "Back Office Executive" },
+  { value: "customer-support-executive", label: "Customer Support Executive" },
+  // Sales
+  { value: "sales-associate-inbound", label: "Sales Associate (Inbound)" },
+  { value: "sales-associate-outbound", label: "Sales Associate (Outbound)" },
+  { value: "field-sales-executive", label: "Field Sales Executive" },
   { value: "sales-manager", label: "Sales Manager" },
-  { value: "human-resource-manager", label: "Human Resource Manager" },
+  { value: "telecaller", label: "Telecaller / Tele Sales Executive" },
+  // Marketing
+  { value: "digital-marketing-executive", label: "Digital Marketing Executive" },
+  { value: "performance-marketer", label: "Performance Marketer" },
+  { value: "seo-specialist", label: "SEO Specialist" },
+  { value: "social-media-manager", label: "Social Media Manager" },
+  { value: "content-creator", label: "Content Creator / Copywriter" },
+  // Creative
+  { value: "graphic-designer", label: "Graphic Designer" },
+  { value: "video-editor", label: "Video Editor" },
+  { value: "ui-ux-designer", label: "UI/UX Designer" },
+  // HR
+  { value: "hr-executive", label: "HR Executive" },
+  { value: "hr-manager", label: "HR Manager" },
+  // Operations
+  { value: "operations-executive", label: "Operations Executive" },
+  { value: "operations-manager", label: "Operations Manager" },
+  // Tech
+  { value: "software-developer", label: "Software Developer" },
+  { value: "web-developer", label: "Web Developer" },
+  { value: "mobile-app-developer", label: "Mobile App Developer" },
+  { value: "crm-executive", label: "CRM Executive (Zoho / Salesforce)" },
+  { value: "automation-specialist", label: "Automation Specialist" },
+  { value: "it-support-executive", label: "IT Support Executive" },
+  // Finance
+  { value: "accountant", label: "Accountant" },
+  { value: "billing-executive", label: "Billing Executive" },
+  // Management
+  { value: "project-manager", label: "Project Manager" },
+  { value: "product-manager", label: "Product Manager" },
+  // Other
+  { value: "intern", label: "Intern (All Departments)" },
   { value: "other", label: "Other" },
 ];
 
@@ -236,15 +269,22 @@ export default function ApplyNowForm() {
         >
           Phone Number <span className="text-[var(--accent-primary)]">*</span>
         </label>
-        <input
-          type="tel"
-          id="apply-phone"
-          required
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          className={inputBase}
-          placeholder="+1 234 567 8900"
-        />
+        <div className="flex">
+          <span className="inline-flex items-center px-4 py-3 rounded-l-lg border border-r-0 border-border-default bg-gray-50 text-text-secondary text-sm font-medium shadow-input-shadow select-none">
+            🇮🇳 +91
+          </span>
+          <input
+            type="tel"
+            id="apply-phone"
+            required
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className={`${inputBase} rounded-l-none`}
+            placeholder="98765 43210"
+            maxLength={15}
+            pattern="[0-9\s\-]{7,15}"
+          />
+        </div>
       </div>
 
       {/* Role Applying For */}
@@ -260,14 +300,16 @@ export default function ApplyNowForm() {
           required
           value={role}
           onChange={(e) => setRole(e.target.value)}
-          className={selectBase}
+          className={`${selectBase} cursor-pointer focus:border-accent-primary focus:shadow-[0_0_0_3px_rgba(var(--accent-primary-rgb),0.15)]`}
           aria-label="Role applying for"
+          size={1}
         >
           {ROLE_OPTIONS.map((opt) => (
             <option
               key={opt.value || "empty"}
               value={opt.value}
-              className="apply-select-option"
+              disabled={opt.value === ""}
+              className="apply-select-option py-1"
             >
               {opt.label}
             </option>

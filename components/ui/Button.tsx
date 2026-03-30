@@ -16,19 +16,19 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const baseStyles =
-    "inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg-base disabled:opacity-50 disabled:pointer-events-none";
+    "relative inline-flex items-center justify-center font-bold tracking-tight transition-all duration-300 rounded-2xl focus:outline-none disabled:opacity-50 disabled:pointer-events-none hover:scale-[1.03] active:scale-[0.95]";
 
   const variants = {
     primary:
-      "bg-accent-primary text-white hover:bg-accent-primary-hover shadow-glow-primary focus:ring-accent-primary",
+      "bg-gradient-to-r from-accent-primary via-indigo-600 to-purple-600 bg-[length:200%_auto] hover:bg-right text-white shadow-[0_8px_30px_-6px_rgba(99,102,241,0.4)] hover:shadow-[0_15px_45px_-8px_rgba(99,102,241,0.5)] border border-white/10",
     secondary:
-      "bg-white text-text-primary border border-border-default hover:bg-gray-50 focus:ring-gray-200",
+      "bg-white/5 backdrop-blur-md text-text-primary border border-border-default hover:bg-white/10 hover:border-text-primary/10 shadow-sm",
   };
 
   const sizes = {
-    sm: "px-4 py-2 text-sm",
-    md: "px-6 py-3 text-base",
-    lg: "px-8 py-4 text-lg",
+    sm: "px-5 py-2.5 text-[10px] uppercase tracking-[0.2em]",
+    md: "px-8 py-4 text-[11px] uppercase tracking-[0.2em]",
+    lg: "px-10 py-5 text-xs uppercase tracking-[0.2em]",
   };
 
   return (

@@ -1,54 +1,51 @@
 export interface CapabilityItem {
   id: string;
-  icon: string;
   title: string;
   description: string;
+  iconName: string; // lucide-react icon name key
 }
 
 export const capabilities: CapabilityItem[] = [
   {
     id: "1",
-    icon: "/assets/icon-mobile.svg",
-    title: "Enterprise Web Applications",
-    description: "Full-stack web platforms built with modern frameworks and scalable modular architectures.",
+    iconName: "Code2",
+    title: "Custom Software Development",
+    description: "Enterprise web applications tailored to your business needs.",
   },
   {
     id: "2",
-    icon: "/assets/icon-people.svg",
-    title: "Cloud Infrastructure",
-    description: "Cloud-native solutions leveraging major providers for resilient and highly available infrastructure.",
+    iconName: "Smartphone",
+    title: "Mobile App Development",
+    description: "High-performance Android & iOS applications.",
   },
   {
     id: "3",
-    icon: "/assets/icon-slider.svg",
-    title: "Mobile App Engineering",
-    description: "High-performance native and cross-platform mobile solutions tailored for iOS and Android.",
+    iconName: "BarChart3",
+    title: "Digital Marketing & SEO",
+    description: "Data-driven strategies to increase visibility and generate leads.",
   },
   {
     id: "4",
-    icon: "/assets/icon-check.svg",
-    title: "Backend Systems",
-    description: "Secure, high-throughput API microservices and database designs that power enterprise applications.",
+    iconName: "Users",
+    title: "Talent Acquisition & Hiring",
+    description: "Finding and managing the right people for your business.",
   },
   {
     id: "5",
-    icon: "/assets/icon-check.svg",
-    title: "Artificial Intelligence",
-    description: "Custom AI solutions, generative models, and intelligent automation built for business optimization.",
+    iconName: "Zap",
+    title: "Business Process Automation",
+    description: "Streamlining operations to save time and cost.",
   },
   {
     id: "6",
-    icon: "/assets/icon-check.svg",
-    title: "Digital Transformation",
-    description: "Strategic engineering consulting to modernize legacy systems and adopt scalable modern practices.",
+    iconName: "Settings2",
+    title: "CRM Setup & Customization",
+    description: "Optimizing systems like Zoho, Salesforce for better sales tracking.",
   },
-];
-
-export const techIcons: string[] = [
-  "/assets/logos/logo-1.svg",
-  "/assets/logos/logo-2.svg",
-  "/assets/logos/logo-3.svg",
-  "/assets/logos/logo-4.svg",
-  "/assets/logos/logo-5.svg",
-  "/assets/logos/logo-6.svg",
+  {
+    id: "7",
+    iconName: "TrendingUp",
+    title: "Sales Outsourcing",
+    description: "Dedicated team to handle your sales and customer conversion.",
+  },
 ];

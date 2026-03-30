@@ -10,11 +10,6 @@ interface BookingCardProps {
   variant?: "inline" | "modal";
 }
 
-const GLOW_BASE =
-  "0 2px 16px rgba(var(--accent-primary-rgb),0.1), 0 10px 32px rgba(0,0,0,0.05)";
-const GLOW_HOVER =
-  "0 4px 24px rgba(var(--accent-primary-rgb),0.2), 0 15px 48px rgba(0,0,0,0.1)";
-
 export default function BookingCard({
   children,
   brandName = "Shakya Consultants",
@@ -23,36 +18,31 @@ export default function BookingCard({
 }: BookingCardProps) {
   const [hovered, setHovered] = useState(false);
 
+  // UNIVERSAL LAYOUT: Centered narrow card for high-focus guided experience
   const rootLayoutClass =
     variant === "modal"
-      ? "w-full max-w-[1000px] max-h-[90vh] flex flex-col min-w-0 overflow-x-hidden shrink-0"
-      : "w-full";
+      ? "w-full sm:max-w-[540px] h-full sm:h-auto sm:max-h-[90vh] flex flex-col min-w-0 shrink-0 mx-auto"
+      : "w-full max-w-[540px] mx-auto";
 
+  // Body height classes: Consistent height for the step flow
   const bodyHeightClass =
     variant === "modal"
-      ? "min-h-[400px] max-h-[calc(90vh-8rem)] h-[560px] overflow-y-auto"
-      : "h-[560px]";
+      ? "flex-1 sm:min-h-[500px] sm:max-h-[calc(90vh-4rem)] sm:h-[640px] overflow-hidden"
+      : "h-[640px]";
 
   return (
     <div
-      className={`cursor-default overflow-hidden rounded-[18px] border-2 border-accent-primary bg-white transition-shadow duration-300 ${
-        hovered ? "shadow-glow-primary-soft" : "shadow-glow-primary"
-      } ${rootLayoutClass} ${className}`}
-      onMouseEnter={() => setHovered(true)}
+      className={`
+        cursor-default overflow-hidden transition-all duration-500 relative calendar-card
+        ${hovered ? "scale-[1.02] shadow-[0_30px_70px_rgba(0,0,0,0.3),0_0_50px_rgba(99,102,241,0.25)] border-white/20" : ""}
+        ${rootLayoutClass} ${className}
+      `}
+      onMouseEnter={() => variant !== "modal" ? setHovered(true) : undefined}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Header — blue background with white text for high contrast */}
+      {/* Body: Universal step container */}
       <div
-        className="flex items-center justify-center px-4 min-h-[56px] h-14 shrink-0 bg-accent-primary text-white"
-      >
-        <p className="text-sm sm:text-base font-semibold text-center">
-          Book Your Call With {brandName} Now!
-        </p>
-      </div>
-
-      {/* Body: fixed height inline; modal uses max-height so it fits viewport */}
-      <div
-        className={`m-3 rounded-[14px] overflow-hidden flex flex-col cursor-pointer bg-white ${bodyHeightClass}`}
+        className={`sm:m-4 sm:rounded-[24px] overflow-hidden flex flex-col cursor-pointer calendar-card-inner ${bodyHeightClass}`}
       >
         {children}
       </div>

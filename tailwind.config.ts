@@ -17,18 +17,22 @@ const config: Config = {
         "accent-secondary": "var(--accent-secondary)",
         
         // Backgrounds (Clean, Professional Light)
-        "bg-base": "var(--bg-base)",
+        "bg-base": "#F8FAFC", // Soft Neutral Gray
+        "bg-surface": "#FFFFFF",
+        "bg-soft": "#F1F5F9", 
+        "bg-navy": "#0B0F1A", // Deep Navy
+        "bg-navy-light": "#131926",
         "bg-card": "rgba(255, 255, 255, 0.8)", // White glass
-        "bg-elevated": "rgba(255, 255, 255, 0.95)",
         
         // Text
-        "text-primary": "#0F172A", // Slate 900 (Near Black)
-        "text-secondary": "#475569", // Slate 600 (Professional Gray)
-        "text-muted": "#64748B", // Slate 500
+        "text-primary": "#0B0F1A", // Deep Navy Heading
+        "text-secondary": "#475569", 
+        "text-muted": "#64748B", 
         "text-accent": "var(--accent-primary)",
         
         // Borders
-        "border-default": "rgba(0, 0, 0, 0.08)",
+        "border-default": "rgba(0, 0, 0, 0.06)",
+        "border-subtle": "rgba(0, 0, 0, 0.03)",
         "border-primary-hover": "rgba(var(--accent-primary-rgb), 0.4)",
       },
       fontFamily: {
@@ -54,9 +58,11 @@ const config: Config = {
       },
       backgroundImage: {
         "gradient-primary": "linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%)",
+        "gradient-mesh": "radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0, transparent 50%)",
       },
       boxShadow: {
         "card-shadow": "0 10px 30px -10px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.02)",
+        "premium": "0 20px 50px -12px rgba(0,0,0,0.08), 0 0 1px 1px rgba(0,0,0,0.02)",
         "glow-primary": "0 0 0 1px rgba(var(--accent-primary-rgb), 0.1), 0 4px 14px rgba(var(--accent-primary-rgb), 0.08)",
         "glow-primary-soft": "0 4px 14px rgba(var(--accent-primary-rgb), 0.05)",
         "glow-primary-spark": "0 0 20px rgba(var(--accent-primary-rgb), 0.05), 0 0 40px rgba(var(--accent-primary-rgb), 0.02)",
@@ -64,8 +70,8 @@ const config: Config = {
         "input-focus": "0 0 0 2px rgba(var(--accent-primary-rgb), 0.2)",
       },
       borderRadius: {
-        "card": "1rem",
-        "button": "0.5rem",
+        "card": "1.5rem",
+        "button": "0.75rem",
       },
       backgroundColor: {
         "card-light": "rgba(255, 255, 255, 0.9)",
@@ -75,8 +81,24 @@ const config: Config = {
         "footer": "rgba(249, 250, 251, 0.98)",
         "button-primary": "var(--accent-primary)",
       },
+      keyframes: {
+        "marquee-left": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        "marquee-right": {
+          "0%": { transform: "translateX(-50%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+      },
+      animation: {
+        "marquee-left": "marquee-left 30s linear infinite",
+        "marquee-right": "marquee-right 30s linear infinite",
+      },
     },
   },
   plugins: [],
 };
 export default config;
+
+

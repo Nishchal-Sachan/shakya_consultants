@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
+import { ChevronLeft, ChevronRight, Globe, Check, ArrowRight, Calendar, Clock, User, Edit3, ShieldCheck } from "lucide-react";
 
 const WEEKDAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-const GOLD = "var(--accent-primary)";
 
 function getDaysInMonth(year: number, month: number) {
   const first = new Date(year, month, 1);
@@ -50,6 +50,17 @@ export default function BookingCalendarWidget() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  // UNIVERSAL STEP STATE
+  const [step, setStep] = useState(1);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // When step changes, scroll to top
+  useEffect(() => {
+    if (scrollRef.current) {
+        scrollRef.current.scrollTop = 0;
+    }
+  }, [step]);
+
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
   const monthLabel = viewDate.toLocaleString("default", { month: "long", year: "numeric" });
@@ -60,18 +71,23 @@ export default function BookingCalendarWidget() {
     return generateTimeSlots(d);
   }, [selectedDate]);
 
-  const goPrev = () => setViewDate((d) => new Date(d.getFullYear(), d.getMonth() - 1));
-  const goNext = () => setViewDate((d) => new Date(d.getFullYear(), d.getMonth() + 1));
+  const goPrevMonth = () => setViewDate((d) => new Date(d.getFullYear(), d.getMonth() - 1));
+  const goNextMonth = () => setViewDate((d) => new Date(d.getFullYear(), d.getMonth() + 1));
 
   const handleDateClick = (day: number | null) => {
     if (day === null) return;
-    setSelectedDate(new Date(year, month, day));
+    const newDate = new Date(year, month, day);
+    setSelectedDate(newDate);
     setSelectedTime(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedDate || !selectedTime) return;
+  const handleTimeSelect = (slot: string) => {
+    setSelectedTime(slot);
+  };
+
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!selectedDate || !selectedTime || !name || !email) return;
     setSubmitError(null);
     setSubmitting(true);
     try {
@@ -103,176 +119,230 @@ export default function BookingCalendarWidget() {
     }
   };
 
-  return (
-    <div className="flex flex-col w-full min-w-0 max-w-full h-full min-h-0 bg-white overflow-x-hidden">
-      <div className="flex flex-1 min-h-0 flex-col sm:flex-row overflow-hidden min-w-0">
-        {/* Left: Date picker — static, no scroll */}
-        <div className="flex flex-col shrink-0 border-b sm:border-b-0 sm:border-r border-gray-200 p-4 sm:min-w-[220px] overflow-hidden min-w-0">
-          {/* Month navigation */}
-          <div className="flex items-center justify-between mb-3">
-            <button
-              type="button"
-              onClick={goPrev}
-              className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors"
-              aria-label="Previous month"
-            >
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M8 2L4 6l4 4" />
-              </svg>
-            </button>
-            <span className="text-sm font-semibold text-gray-800">{monthLabel}</span>
-            <button
-              type="button"
-              onClick={goNext}
-              className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors"
-              aria-label="Next month"
-            >
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M4 2l4 4-4 4" />
-              </svg>
-            </button>
-          </div>
+  const getStepTitle = () => {
+    if (step === 1) return "Select Date";
+    if (step === 2) return "Select Time";
+    return "Your Details";
+  };
 
-          {/* Weekday labels */}
-          <div className="grid grid-cols-7 gap-0.5 mb-1">
-            {WEEKDAYS.map((wd) => (
-              <div key={wd} className="text-center text-xs font-medium text-gray-500 py-1">
-                {wd}
-              </div>
+  const isFormComplete = name && email && selectedDate && selectedTime;
+
+  if (submitted) {
+    return (
+      <div className="flex flex-col items-center justify-center p-10 text-center space-y-6 h-full min-h-[500px] bg-[#0F172A] animate-fade-in">
+        <div className="w-24 h-24 bg-green-500/10 rounded-[2.5rem] flex items-center justify-center shadow-inner scale-110 border border-green-500/20">
+           <Check className="w-12 h-12 text-green-400" />
+        </div>
+        <div className="space-y-4">
+          <h3 className="text-3xl font-black text-white tracking-tighter">Consultation Booked</h3>
+          <p className="text-slate-300 font-medium px-8 text-lg">
+            Scheduled for <span className="text-accent-primary font-black">{selectedDate?.toLocaleDateString()}</span> at <span className="text-accent-primary font-black">{selectedTime}</span>.
+          </p>
+        </div>
+        <div className="flex items-center gap-3 px-8 py-4 bg-white/5 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] border border-white/5">
+           <ShieldCheck size={16} className="text-green-400" />
+           Confirmation email sent
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col w-full h-full bg-[#0F172A] relative overflow-hidden">
+      
+      {/* UNIVERSAL STEP HEADER (IDENTICAL MOBILE/DESKTOP) */}
+      <div className="shrink-0 border-b border-white/5 bg-[#0F172A] relative z-40 px-6 pt-10 pb-6">
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-4">
+            {step > 1 && (
+              <button 
+                onClick={() => setStep(step - 1)}
+                className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white active:scale-90 transition-all hover:bg-white/10"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+            )}
+            <h3 className="text-xl font-black text-white tracking-tighter uppercase">{getStepTitle()}</h3>
+          </div>
+          
+          <div className="flex gap-2.5">
+            {[1, 2, 3].map((s) => (
+              <div 
+                key={s} 
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${step === s ? "w-8 bg-accent-primary" : "bg-white/20"}`}
+              />
             ))}
           </div>
-
-          {/* Date grid */}
-          <div className="grid grid-cols-7 gap-0.5">
-            {days.map((day, i) => {
-              if (day === null) return <div key={`empty-${i}`} />;
-              const date = new Date(year, month, day);
-              const isSelected =
-                selectedDate &&
-                selectedDate.getDate() === day &&
-                selectedDate.getMonth() === month &&
-                selectedDate.getFullYear() === year;
-              return (
-                  <button
-                    key={day}
-                    type="button"
-                    onClick={() => handleDateClick(day)}
-                    className={`w-8 h-8 rounded-full text-sm font-medium flex items-center justify-center mx-auto transition-colors ${
-                      isSelected ? "bg-accent-primary text-black" : "text-gray-700"
-                    }`}
-                  >
-                    {day}
-                  </button>
-              );
-            })}
-          </div>
-
-          {/* Timezone selector */}
-          <div className="mt-4 pt-3 border-t border-gray-200">
-            <label htmlFor="timezone-select" className="sr-only">Timezone</label>
-            <div className="flex items-center gap-2 w-full rounded-lg border border-gray-300 bg-white px-3 py-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-500 shrink-0">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-              </svg>
-              <select
-                id="timezone-select"
-                value={timezone}
-                onChange={(e) => setTimezone(e.target.value)}
-                className="flex-1 text-sm text-gray-700 bg-transparent border-0 p-0 focus:ring-0 focus:outline-none"
-              >
-                {TIMEZONES.map((tz) => (
-                  <option key={tz} value={tz}>
-                    {tz.replace(/_/g, " ")}
-                  </option>
-                ))}
-              </select>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400 shrink-0">
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </div>
-          </div>
         </div>
+      </div>
 
-        {/* Right: Time slots — only this column scrolls */}
-        <div className="flex flex-col flex-1 min-h-0 min-w-0 p-4 overflow-hidden">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3 shrink-0">
-            SELECT A TIME
-          </h3>
-          {selectedDate ? (
-            <div className="flex flex-wrap gap-2 overflow-y-auto overflow-x-hidden min-h-0 flex-1 content-start">
-              {timeSlots.map((slot) => (
-                <button
-                  key={slot}
-                  type="button"
-                  onClick={() => setSelectedTime(slot)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors shrink-0 ${
-                    selectedTime === slot
-                      ? "border-accent-primary bg-accent-primary/20 text-gray-900"
-                      : "border-gray-300 text-gray-700"
-                  }`}
-                >
-                  {slot}
+      {/* VIEWPORT WITH INDEPENDENT SCROLL */}
+      <div 
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto px-6 py-8 pb-32 animate-fade-in relative z-10"
+      >
+        
+        {/* STEP 1: DATE */}
+        {step === 1 && (
+          <div className="space-y-10 animate-slide-up">
+             <div className="flex items-center justify-between px-2">
+                <button onClick={goPrevMonth} className="w-10 h-10 flex items-center justify-center hover:bg-white/5 rounded-2xl transition-colors border border-white/10">
+                  <ChevronLeft className="w-5 h-5 text-slate-400" />
                 </button>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500">No available times</p>
-          )}
-        </div>
+                <div className="text-center">
+                   <p className="text-[10px] font-black text-accent-primary uppercase tracking-[0.25em] mb-1">Calendar</p>
+                   <span className="text-lg font-black text-white tracking-tighter">{monthLabel}</span>
+                </div>
+                <button onClick={goNextMonth} className="w-10 h-10 flex items-center justify-center hover:bg-white/5 rounded-2xl transition-colors border border-white/10">
+                   <ChevronRight className="w-5 h-5 text-slate-400" />
+                </button>
+             </div>
+
+             <div className="grid grid-cols-7 gap-2">
+                {WEEKDAYS.map(day => (
+                  <div key={day} className="text-[10px] font-black text-slate-500 tracking-widest text-center py-2 opacity-40">{day}</div>
+                ))}
+                {days.map((day, i) => {
+                  if (day === null) return <div key={`empty-${i}`} />;
+                  const date = new Date(year, month, day);
+                  const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                  const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+                  const isSelected = selectedDate && selectedDate.getDate() === day && selectedDate.getMonth() === month && selectedDate.getFullYear() === year;
+
+                  return (
+                    <button
+                      key={day}
+                      disabled={isPast}
+                      onClick={() => handleDateClick(day)}
+                      className={`
+                        aspect-square rounded-2xl text-sm font-black flex flex-col items-center justify-center transition-all duration-300 relative
+                        ${isSelected ? "bg-accent-primary text-white shadow-[0_0_20px_rgba(79,70,229,0.4)] scale-110 z-10" : "text-slate-300 hover:bg-white/5"}
+                        ${isPast ? "opacity-[0.1] pointer-events-none" : ""}
+                        ${isToday && !isSelected ? "border-2 border-accent-primary/40" : ""}
+                      `}
+                    >
+                      {day}
+                      {isToday && !isSelected && <div className="absolute bottom-1 w-1 h-1 bg-accent-primary rounded-full" />}
+                    </button>
+                  );
+                })}
+             </div>
+
+             <div className="flex items-center gap-4 px-6 py-5 bg-white/5 rounded-2xl border border-white/5">
+                <Globe className="w-5 h-5 text-accent-primary" />
+                <select 
+                  value={timezone}
+                  onChange={(e) => setTimezone(e.target.value)}
+                  className="bg-transparent text-[11px] font-black text-white uppercase tracking-widest focus:ring-0 focus:outline-none flex-1 truncate"
+                >
+                  {TIMEZONES.map(tz => (
+                    <option key={tz} value={tz} className="bg-[#0F172A] text-white">{tz.split("/")[1].replace("_", " ")}</option>
+                  ))}
+                </select>
+             </div>
+          </div>
+        )}
+
+        {/* STEP 2: TIME */}
+        {step === 2 && (
+          <div className="space-y-10 animate-slide-up">
+             <div className="flex items-center gap-4 px-2">
+                <div className="w-10 h-10 rounded-xl bg-accent-primary/20 flex items-center justify-center">
+                   <Clock className="w-5 h-5 text-accent-primary" />
+                </div>
+                <div>
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em]">Schedule Time</p>
+                   <p className="text-lg font-black text-white tracking-tighter">{selectedDate?.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+                </div>
+             </div>
+
+             <div className="grid grid-cols-2 gap-4">
+                {timeSlots.map(slot => (
+                  <button
+                    key={slot}
+                    onClick={() => handleTimeSelect(slot)}
+                    className={`
+                      p-5 rounded-2xl text-base font-black border transition-all duration-400 text-center
+                      ${selectedTime === slot 
+                        ? "bg-accent-primary text-white border-transparent shadow-[0_0_20px_rgba(79,70,229,0.4)] scale-[1.03] z-10" 
+                        : "bg-white/5 border-white/10 text-slate-300 hover:border-accent-primary/50 hover:bg-white/10"}
+                    `}
+                  >
+                    {slot}
+                  </button>
+                ))}
+             </div>
+          </div>
+        )}
+
+        {/* STEP 3: DETAILS */}
+        {step === 3 && (
+          <div className="space-y-10 animate-slide-up">
+             <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 p-8 rounded-[2.5rem] border border-white/10 relative">
+                <p className="text-[11px] font-black text-accent-primary uppercase tracking-[0.25em] mb-4">You&apos;re scheduling for</p>
+                <div className="space-y-1">
+                   <p className="text-xl font-black text-white tracking-tighter">{selectedDate?.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+                   <p className="text-lg font-black text-accent-primary">{selectedTime}</p>
+                </div>
+             </div>
+
+             <div className="space-y-6">
+                <div className="space-y-2 px-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Full Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 p-5 rounded-3xl font-black text-white text-lg focus:ring-4 focus:ring-accent-primary/10 focus:border-accent-primary transition-all outline-none"
+                    placeholder="E.g. John Doe"
+                  />
+                </div>
+                <div className="space-y-2 px-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Work Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 p-5 rounded-3xl font-black text-white text-lg focus:ring-4 focus:ring-accent-primary/10 focus:border-accent-primary transition-all outline-none"
+                    placeholder="john@company.com"
+                  />
+                </div>
+                {submitError && <p className="text-[10px] font-black text-red-400 uppercase tracking-widest px-2">{submitError}</p>}
+             </div>
+          </div>
+        )}
+
       </div>
 
-      {/* Booking form — static */}
-      <div className="border-t border-gray-200 p-4 bg-gray-50/50 shrink-0">
-        {submitted ? (
-          <p className="text-sm font-medium text-gray-700">
-            Thank you! Your call is booked for {selectedDate?.toLocaleDateString()} at {selectedTime}. We&apos;ll confirm via email.
-          </p>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-3">
-            {submitError && (
-              <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{submitError}</p>
-            )}
-            <div>
-              <label htmlFor="booking-name" className="block text-xs font-medium text-gray-600 mb-1">
-                Name
-              </label>
-              <input
-                id="booking-name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                disabled={submitting}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500 disabled:opacity-70"
-                placeholder="Your name"
-              />
-            </div>
-            <div>
-              <label htmlFor="booking-email" className="block text-xs font-medium text-gray-600 mb-1">
-                Email
-              </label>
-              <input
-                id="booking-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={submitting}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500 disabled:opacity-70"
-                placeholder="you@example.com"
-              />
-            </div>
+      {/* UNIVERSAL STICKY BOTTOM NAV BAR (IDENTICAL MOBILE/DESKTOP) */}
+      <div className="absolute inset-x-0 bottom-0 p-6 bg-[#0F172A]/95 backdrop-blur-2xl border-t border-white/5 z-50 shadow-[0_-20px_50px_-20px_rgba(0,0,0,0.5)]">
+          {step < 3 ? (
             <button
-              type="submit"
-              disabled={!selectedDate || !selectedTime || submitting}
-              className="w-full py-2.5 rounded-lg text-sm font-semibold text-black transition-opacity disabled:opacity-50 bg-accent-primary"
+              onClick={() => {
+                if (step === 1 && selectedDate) setStep(2);
+                else if (step === 2 && selectedTime) setStep(3);
+              }}
+              disabled={(step === 1 && !selectedDate) || (step === 2 && !selectedTime)}
+              className="w-full bg-accent-primary text-white py-6 rounded-[2rem] font-black text-sm tracking-[0.3em] uppercase shadow-[0_0_30px_rgba(79,70,229,0.4)] flex items-center justify-center gap-4 active:scale-95 transition-all disabled:opacity-30 disabled:grayscale hover:brightness-110"
             >
-              {submitting ? "Sending…" : "Book appointment"}
+              Continue
+              <ArrowRight className="w-6 h-6" />
             </button>
-          </form>
-        )}
+          ) : (
+            <button
+              type="button"
+              onClick={() => handleSubmit()}
+              disabled={submitting || !isFormComplete}
+              className="w-full bg-accent-primary text-white py-6 rounded-[2rem] font-black text-sm tracking-[0.3em] uppercase shadow-[0_0_30px_rgba(79,70,229,0.4)] flex items-center justify-center gap-4 active:scale-95 transition-all disabled:opacity-30 disabled:grayscale hover:brightness-110"
+            >
+              {submitting ? "Booking..." : "Complete Booking"}
+              <ArrowRight className="w-6 h-6" />
+            </button>
+          )}
       </div>
+
     </div>
   );
 }
