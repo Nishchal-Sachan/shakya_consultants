@@ -23,20 +23,18 @@ export default function Footer() {
     }
   };
 
+  // We use stable icons that are guaranteed to exist in this version
   const socialLinks = [
-    { Icon: (Lucide as any).Linkedin || Lucide.Circle, href: "https://www.linkedin.com/company/gdfinternationals/", label: "LinkedIn" },
-    { Icon: (Lucide as any).Instagram || Lucide.Circle, href: "#", label: "Instagram" },
-    { Icon: (Lucide as any).X || (Lucide as any).Twitter || Lucide.Circle, href: "#", label: "X" },
-    { Icon: (Lucide as any).MessageCircle || Lucide.Circle, href: "#", label: "WhatsApp" },
+    { Icon: Lucide.Globe, href: "https://www.linkedin.com/company/gdfinternationals/", label: "LinkedIn" },
+    { Icon: Lucide.CircleUser, href: "#", label: "Instagram" },
+    { Icon: Lucide.X || Lucide.Circle, href: "#", label: "Social" },
+    { Icon: Lucide.MessageCircle, href: "#", label: "WhatsApp" },
   ];
 
   return (
     <footer className="bg-[#0b0f1a] text-white pt-20 pb-10 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        {/* Main Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          
-          {/* Brand Info */}
           <div className="lg:col-span-1">
             <Link 
               href="/" 
@@ -52,7 +50,7 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-4">
               {socialLinks.map((social, i) => {
-                const Icon = social.Icon as any;
+                const Icon = (social.Icon || Lucide.Circle) as any;
                 return (
                   <a
                     key={i}
@@ -67,7 +65,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
           <div className="flex flex-col">
             <h4 className="text-sm font-bold uppercase tracking-widest text-slate-200 mb-6 font-bold">Services</h4>
             <ul className="space-y-4">
@@ -90,7 +87,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Support */}
           <div className="flex flex-col">
             <h4 className="text-sm font-bold uppercase tracking-widest text-slate-200 mb-6 font-bold">Company</h4>
             <ul className="space-y-4">
@@ -121,7 +117,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact Column */}
           <div className="flex flex-col">
             <h4 className="text-sm font-bold uppercase tracking-widest text-slate-200 mb-6 font-bold">HQ Address</h4>
             <div className="space-y-4">
@@ -143,10 +138,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Divider */}
         <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent mb-10"></div>
 
-        {/* Bottom Section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-slate-500 text-xs">
             © {new Date().getFullYear()} Shakya Consultants. Crafted for excellence.

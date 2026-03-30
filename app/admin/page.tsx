@@ -241,9 +241,11 @@ export default function AdminDashboard() {
               {activeTab === 'projects' ? (
                 <form onSubmit={handleProjectSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Title</label>
+                    <label htmlFor="project-title" className="block text-sm font-medium mb-1">Title</label>
                     <input
+                      id="project-title"
                       type="text"
+                      placeholder="Project Title"
                       className="w-full p-2 border border-border-default rounded focus:ring-accent-primary"
                       value={projectForm.title}
                       onChange={(e) => setProjectForm({ ...projectForm, title: e.target.value })}
@@ -251,8 +253,10 @@ export default function AdminDashboard() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Description</label>
+                    <label htmlFor="project-desc" className="block text-sm font-medium mb-1">Description</label>
                     <textarea
+                      id="project-desc"
+                      placeholder="Brief project description..."
                       className="w-full p-2 border border-border-default rounded"
                       rows={3}
                       value={projectForm.description}
@@ -261,9 +265,11 @@ export default function AdminDashboard() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Project Link</label>
+                    <label htmlFor="project-link" className="block text-sm font-medium mb-1">Project Link</label>
                     <input
+                      id="project-link"
                       type="url"
+                      placeholder="https://example.com"
                       className="w-full p-2 border border-border-default rounded"
                       value={projectForm.projectLink}
                       onChange={(e) => setProjectForm({ ...projectForm, projectLink: e.target.value })}
@@ -271,9 +277,11 @@ export default function AdminDashboard() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Image Upload</label>
+                    <label htmlFor="project-image" className="block text-sm font-medium mb-1">Image Upload</label>
                     <input
+                      id="project-image"
                       type="file"
+                      title="Select project image"
                       accept="image/*"
                       className="w-full"
                       onChange={(e) => setProjectForm({ ...projectForm, image: e.target.files?.[0] || null })}
@@ -287,9 +295,11 @@ export default function AdminDashboard() {
               ) : (
                 <form onSubmit={handleClientSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Client Name</label>
+                    <label htmlFor="client-name" className="block text-sm font-medium mb-1">Client Name</label>
                     <input
+                      id="client-name"
                       type="text"
+                      placeholder="Client or Company Name"
                       className="w-full p-2 border border-border-default rounded"
                       value={clientForm.name}
                       onChange={(e) => setClientForm({ ...clientForm, name: e.target.value })}
@@ -297,9 +307,11 @@ export default function AdminDashboard() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Logo Upload</label>
+                    <label htmlFor="client-logo" className="block text-sm font-medium mb-1">Logo Upload</label>
                     <input
+                      id="client-logo"
                       type="file"
+                      title="Select client logo"
                       accept="image/*"
                       className="w-full"
                       onChange={(e) => setClientForm({ ...clientForm, logo: e.target.files?.[0] || null })}

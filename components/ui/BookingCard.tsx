@@ -35,11 +35,9 @@ export default function BookingCard({
 
   return (
     <div
-      className={`cursor-default overflow-hidden rounded-[18px] border-2 border-accent-primary transition-shadow duration-300 ${rootLayoutClass} ${className}`}
-      style={{
-        backgroundColor: "white",
-        boxShadow: hovered ? GLOW_HOVER : GLOW_BASE,
-      }}
+      className={`cursor-default overflow-hidden rounded-[18px] border-2 border-accent-primary bg-white transition-shadow duration-300 ${
+        hovered ? "shadow-glow-primary-soft" : "shadow-glow-primary"
+      } ${rootLayoutClass} ${className}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -54,8 +52,7 @@ export default function BookingCard({
 
       {/* Body: fixed height inline; modal uses max-height so it fits viewport */}
       <div
-        className={`m-3 rounded-[14px] overflow-hidden flex flex-col cursor-pointer ${bodyHeightClass}`}
-        style={{ backgroundColor: "#ffffff" }}
+        className={`m-3 rounded-[14px] overflow-hidden flex flex-col cursor-pointer bg-white ${bodyHeightClass}`}
       >
         {children}
       </div>

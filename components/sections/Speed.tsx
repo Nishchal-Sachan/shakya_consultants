@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export default function Speed({ className = "" }: { className?: string }) {
   return (
-    <Section id="speed" className={className}>
+    <Section id="speed" className={`py-24 overflow-hidden border-y border-border-default ${className}`}>
       {/* Section Heading */}
       <SectionHeading
         title="Engineering Velocity"

@@ -7,7 +7,7 @@ import Image from "next/image";
 
 export default function Capabilities({ className = "" }: { className?: string }) {
   return (
-    <Section id="capabilities" className={className}>
+    <Section id="capabilities" className={`pt-24 pb-32 overflow-hidden ${className}`}>
       {/* Header Area */}
       <SectionHeading
         label="OUR CAPABILITIES"

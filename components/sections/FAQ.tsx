@@ -20,7 +20,7 @@ export default function FAQ({ className = "" }: { className?: string }) {
   };
 
   return (
-    <Section id="faq" className={className}>
+    <Section id="faq" className={`pt-24 pb-32 items-center justify-center overflow-hidden flex flex-col ${className}`}>
       {/* Section Heading */}
       <SectionHeading
         label="FAQ"

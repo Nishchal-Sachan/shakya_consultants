@@ -153,32 +153,30 @@ export default function BookingCalendarWidget() {
                 selectedDate.getMonth() === month &&
                 selectedDate.getFullYear() === year;
               return (
-                <button
-                  key={day}
-                  type="button"
-                  onClick={() => handleDateClick(day)}
-                  className="w-8 h-8 rounded-full text-sm font-medium flex items-center justify-center mx-auto transition-colors"
-                  style={
-                    isSelected
-                      ? { backgroundColor: GOLD, color: "#000" }
-                      : { color: "#374151" }
-                  }
-                >
-                  {day}
-                </button>
+                  <button
+                    key={day}
+                    type="button"
+                    onClick={() => handleDateClick(day)}
+                    className={`w-8 h-8 rounded-full text-sm font-medium flex items-center justify-center mx-auto transition-colors ${
+                      isSelected ? "bg-accent-primary text-black" : "text-gray-700"
+                    }`}
+                  >
+                    {day}
+                  </button>
               );
             })}
           </div>
 
           {/* Timezone selector */}
           <div className="mt-4 pt-3 border-t border-gray-200">
-            <label className="sr-only">Timezone</label>
+            <label htmlFor="timezone-select" className="sr-only">Timezone</label>
             <div className="flex items-center gap-2 w-full rounded-lg border border-gray-300 bg-white px-3 py-2">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-500 shrink-0">
                 <circle cx="12" cy="12" r="10" />
                 <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
               </svg>
               <select
+                id="timezone-select"
                 value={timezone}
                 onChange={(e) => setTimezone(e.target.value)}
                 className="flex-1 text-sm text-gray-700 bg-transparent border-0 p-0 focus:ring-0 focus:outline-none"
@@ -208,12 +206,11 @@ export default function BookingCalendarWidget() {
                   key={slot}
                   type="button"
                   onClick={() => setSelectedTime(slot)}
-                  className="px-3 py-2 rounded-lg text-sm font-medium border transition-colors shrink-0"
-                  style={
+                  className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors shrink-0 ${
                     selectedTime === slot
-                      ? { borderColor: GOLD, backgroundColor: "rgba(var(--accent-primary-rgb),0.2)", color: "#1f2937" }
-                      : { borderColor: "#d1d5db", color: "#374151" }
-                  }
+                      ? "border-accent-primary bg-accent-primary/20 text-gray-900"
+                      : "border-gray-300 text-gray-700"
+                  }`}
                 >
                   {slot}
                 </button>
@@ -269,8 +266,7 @@ export default function BookingCalendarWidget() {
             <button
               type="submit"
               disabled={!selectedDate || !selectedTime || submitting}
-              className="w-full py-2.5 rounded-lg text-sm font-semibold text-black transition-opacity disabled:opacity-50"
-              style={{ backgroundColor: GOLD }}
+              className="w-full py-2.5 rounded-lg text-sm font-semibold text-black transition-opacity disabled:opacity-50 bg-accent-primary"
             >
               {submitting ? "Sending…" : "Book appointment"}
             </button>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 
@@ -107,9 +108,9 @@ export default function LoginPage() {
 
         {/* Home Link */}
         <div className="mt-8 text-center">
-            <a href="/" className="text-text-secondary hover:text-accent-primary transition-colors text-sm font-medium inline-flex items-center gap-2 underline underline-offset-4 decoration-gray-300 hover:decoration-accent-primary">
+            <Link href="/" className="text-text-secondary hover:text-accent-primary transition-colors text-sm font-medium inline-flex items-center gap-2 underline underline-offset-4 decoration-gray-300 hover:decoration-accent-primary">
                 Back to Site
-            </a>
+            </Link>
         </div>
       </div>
     </div>

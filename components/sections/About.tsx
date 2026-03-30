@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export default function About({ className = "" }: { className?: string }) {
   return (
-    <Section id="about" className={className}>
+    <Section id="about" className={`pt-24 pb-32 overflow-hidden ${className}`}>
       {/* Section Heading */}
       <SectionHeading
         label="ABOUT US"

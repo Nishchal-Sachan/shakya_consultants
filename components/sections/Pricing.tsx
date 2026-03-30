@@ -30,7 +30,7 @@ export default function Pricing({ className = "" }: { className?: string }) {
   }
 
   return (
-    <Section id="pricing" className={className}>
+    <Section id="pricing" className={`pt-24 pb-32 overflow-hidden ${className}`}>
       {/* Section Heading */}
       <SectionHeading
         label="ENGAGEMENT MODELS"

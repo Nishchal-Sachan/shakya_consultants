@@ -3,9 +3,9 @@
 import { features } from "@/data/features";
 import Marquee from "@/components/ui/Marquee";
 
-export default function FeaturesStrip() {
+export default function FeaturesStrip({ className = "" }: { className?: string }) {
   return (
-    <div className="py-6 text-text-primary border-y border-border-default bg-accent-primary/5">
+    <div className={`py-6 text-text-primary border-y border-border-default bg-accent-primary/5 ${className}`}>
       <Marquee speed="slow">
         {features.map((feature) => (
           <div

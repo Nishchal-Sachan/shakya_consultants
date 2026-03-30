@@ -42,7 +42,7 @@ export default function Contact({ className = "" }: { className?: string }) {
   };
 
   return (
-    <Section id="contact">
+    <Section id="contact" className={className}>
       <SectionHeading
         label="CONTACT US"
         title="Ready to get started?"

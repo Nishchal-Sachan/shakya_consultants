@@ -123,14 +123,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className="fixed top-0 left-0 right-0 z-[9998] transition-all duration-300"
-        style={{
-          backgroundColor: "rgba(255, 255, 255, 0.8)",
-          backdropFilter: "blur(12px)",
-          borderBottom: "1px solid rgba(0,0,0,0.05)",
-          boxShadow: "0 1px 10px rgba(0,0,0,0.02)",
-          height: "72px"
-        }}
+        className="fixed top-0 left-0 right-0 z-[9998] transition-all duration-300 h-[72px] bg-white/80 backdrop-blur-xl border-b border-black/5 shadow-[0_1px_10px_rgba(0,0,0,0.02)]"
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-[72px]">
@@ -154,20 +147,9 @@ export default function Navbar() {
                     key={item.href}
                     href={item.href}
                     onClick={(e) => handleSmoothScroll(e, item.href)}
-                    className="font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2 focus:ring-offset-bg-base rounded-md px-2 py-1 relative group text-sm"
-                    style={{
-                      color: isActive ? "var(--accent-primary)" : "rgba(15, 23, 42, 0.8)"
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isActive) {
-                        e.currentTarget.style.color = "var(--accent-primary)";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isActive) {
-                        e.currentTarget.style.color = "rgba(15, 23, 42, 0.8)";
-                      }
-                    }}
+                    className={`font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2 focus:ring-offset-bg-base rounded-md px-2 py-1 relative group text-sm ${
+                      isActive ? "text-accent-primary" : "text-slate-600 hover:text-accent-primary"
+                    }`}
                   >
                     {item.label}
                     <span className={`absolute bottom-0 left-0 h-0.5 bg-accent-primary transition-all duration-200 ${
@@ -186,16 +168,7 @@ export default function Navbar() {
                   openApplyModal();
                   closeMobileMenu();
                 }}
-                className="inline-flex items-center justify-center font-bold transition-all duration-300 rounded-button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-primary focus:ring-offset-white px-5 py-2.5 text-sm text-white shadow-glow-primary hover:shadow-glow-primary-soft"
-                style={{
-                  backgroundColor: "var(--accent-primary)"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "var(--accent-primary-hover)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "var(--accent-primary)";
-                }}
+                className="inline-flex items-center justify-center font-bold transition-all duration-300 rounded-button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-primary focus:ring-offset-white px-5 py-2.5 text-sm text-white bg-accent-primary hover:bg-accent-primary-hover shadow-glow-primary hover:shadow-glow-primary-soft"
               >
                 Join Our Team
               </button>
@@ -211,13 +184,10 @@ export default function Navbar() {
               }}
               className="md:hidden p-2 relative z-10 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer touch-manipulation"
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-              aria-expanded={isMobileMenuOpen}
+              aria-expanded={isMobileMenuOpen ? "true" : "false"}
             >
               <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center pointer-events-none"
-                style={{
-                  backgroundColor: "rgba(var(--accent-primary-rgb),0.15)"
-                }}
+                className="w-10 h-10 rounded-lg flex items-center justify-center pointer-events-none bg-accent-primary/15"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -237,25 +207,16 @@ export default function Navbar() {
       {(isMobileMenuOpen || isMenuClosing) && (
         <div
           ref={menuRef}
-          className="md:hidden fixed top-0 left-0 w-[100vw] h-[100vh] z-[9999] flex flex-col overflow-hidden transition-transform duration-[250ms] ease-out isolate"
-          style={{
-            transform: panelEntered && !isMenuClosing ? "translateX(0)" : "translateX(100%)",
-            backgroundColor: "#F9FAFB",
-            backgroundImage:
-              "radial-gradient(circle at 70% 30%, rgba(79, 70, 229, 0.05), transparent 60%)",
-          }}
+          className={`md:hidden fixed top-0 left-0 w-full h-full z-[9999] flex flex-col overflow-hidden transition-transform duration-[250ms] ease-out isolate bg-[#F9FAFB] bg-[radial-gradient(circle_at_70%_30%,rgba(79,70,229,0.05),transparent_60%)] ${
+            panelEntered && !isMenuClosing ? "translate-x-0" : "translate-x-full"
+          }`}
           role="dialog"
           aria-modal="true"
           aria-label="Mobile menu"
         >
           {/* Decorative layers — no layout impact */}
           <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(1200px circle at 30% 20%, rgba(128,0,255,0.15), transparent 55%)",
-              zIndex: 0,
-            }}
+            className="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(1200px_circle_at_30%_20%,rgba(128,0,255,0.15),transparent_55%)]"
           />
           <div className="mobile-menu-grain absolute inset-0 pointer-events-none" aria-hidden="true" />
 
@@ -278,8 +239,7 @@ export default function Navbar() {
                 ref={closeButtonRef}
                 type="button"
                 onClick={closeMobileMenu}
-                className="w-10 h-10 rounded-lg flex items-center justify-center text-text-primary hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-accent-primary"
-                style={{ backgroundColor: "rgba(var(--accent-primary-rgb),0.15)" }}
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-text-primary hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-accent-primary bg-accent-primary/15"
                 aria-label="Close menu"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -294,8 +254,7 @@ export default function Navbar() {
                   openApplyModal();
                   closeMobileMenu();
                 }}
-                className="w-full min-h-[48px] py-4 rounded-button font-semibold text-base text-white cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2 focus:ring-offset-white active:opacity-90 touch-manipulation shadow-glow-primary"
-                style={{ backgroundColor: "var(--accent-primary)" }}
+                className="w-full min-h-[48px] py-4 rounded-button font-semibold text-base text-white cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2 focus:ring-offset-white active:opacity-90 touch-manipulation shadow-glow-primary bg-accent-primary"
               >
                 Join Our Team
               </button>
