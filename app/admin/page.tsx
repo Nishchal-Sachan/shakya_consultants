@@ -83,7 +83,12 @@ export default function AdminDashboard() {
 
   const fetchTestimonials = async () => {
     try {
-      const res = await fetch('/api/testimonials');
+      const token = getAuthToken();
+      const res = await fetch('/api/testimonials', {
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+        }
+      });
       const data = await res.json();
       if (data.success) setTestimonials(data.data);
     } catch (err) {
@@ -256,6 +261,30 @@ export default function AdminDashboard() {
       }
     } catch (err) {
       alert('Deletion failed');
+    }
+  };
+
+  const toggleTestimonialActive = async (id: string, currentStatus: boolean) => {
+    const token = getAuthToken();
+    if (!token) return router.push('/admin/login');
+
+    try {
+      const res = await fetch(`/api/testimonials/${id}`, { 
+        method: 'PATCH',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ isActive: !currentStatus })
+      });
+      const data = await res.json();
+      if (data.success) {
+          fetchTestimonials();
+      } else {
+          if (res.status === 401) handleLogout();
+      }
+    } catch (err) {
+      alert('Update failed');
     }
   };
 
@@ -561,7 +590,10 @@ export default function AdminDashboard() {
               {activeTab === 'testimonials' && (
                 testimonials.length > 0 ? (
                   testimonials.map((t) => (
-                    <Card key={t._id} className="p-4 flex flex-col overflow-hidden">
+                    <Card key={t._id} className="p-4 flex flex-col overflow-hidden relative">
+                      <div className={`absolute top-4 right-4 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${t.isActive ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                        {t.isActive ? 'Published' : 'Pending'}
+                      </div>
                       <div className="flex items-center gap-4 mb-4">
                         <div className="w-12 h-12 bg-gray-100 rounded-full overflow-hidden border">
                           {t.imageUrl ? (
@@ -583,7 +615,13 @@ export default function AdminDashboard() {
                       <p className="text-sm text-text-secondary line-clamp-3 italic mb-4">
                         &quot;{t.message}&quot;
                       </p>
-                      <div className="mt-auto flex justify-end">
+                      <div className="mt-auto flex justify-between items-center">
+                        <button 
+                          onClick={() => toggleTestimonialActive(t._id, t.isActive)}
+                          className={`text-sm font-semibold ${t.isActive ? 'text-orange-500 hover:text-orange-700' : 'text-green-600 hover:text-green-800'}`}
+                        >
+                          {t.isActive ? 'Unpublish' : 'Approve & Publish'}
+                        </button>
                         <button 
                           onClick={() => deleteTestimonial(t._id)}
                           className="text-red-500 hover:text-red-700 text-sm font-medium"

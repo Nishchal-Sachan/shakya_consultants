@@ -151,56 +151,54 @@ export default function BookingCalendarWidget() {
     <div className="flex flex-col w-full h-full bg-[#0F172A] relative overflow-hidden">
       
       {/* UNIVERSAL STEP HEADER (IDENTICAL MOBILE/DESKTOP) */}
-      <div className="shrink-0 border-b border-white/5 bg-[#0F172A] relative z-40 px-6 pt-4 pb-3">
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-4">
+      <div className="shrink-0 border-b border-white/5 bg-[#0F172A] relative z-40 px-4 sm:px-6 pt-1 sm:pt-4 pb-1 sm:pb-2 flex items-center justify-between">
+          <div className="flex items-center gap-3 sm:gap-4">
             {step > 1 && (
               <button 
                 onClick={() => setStep(step - 1)}
                 aria-label="Go back to previous step"
-                className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white active:scale-90 transition-all hover:bg-white/10"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white active:scale-90 transition-all hover:bg-white/10"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             )}
-            <h3 className="text-xl font-black text-white tracking-tighter uppercase">{getStepTitle()}</h3>
+            <h3 className="text-lg sm:text-xl font-black text-white tracking-tighter uppercase">{getStepTitle()}</h3>
           </div>
           
-          <div className="flex gap-2.5">
+          <div className="flex gap-1 sm:gap-2.5">
             {[1, 2, 3].map((s) => (
               <div 
                 key={s} 
-                className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${step === s ? "w-8 bg-accent-primary" : "bg-white/20"}`}
+                className={`w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-500 ${step === s ? "w-5 sm:w-8 bg-accent-primary" : "bg-white/20"}`}
               />
             ))}
           </div>
-        </div>
       </div>
 
       {/* MAIN CONTENT AREA - FLEXIBLE AND CENTERED */}
       <div 
-        className="flex-1 min-h-0 px-6 py-4 animate-fade-in relative z-10 flex flex-col justify-center overflow-hidden"
+        className="flex-1 min-h-0 px-4 sm:px-6 animate-fade-in relative z-10 flex flex-col justify-between sm:justify-center overflow-hidden"
       >
         
         {/* STEP 1: DATE */}
         {step === 1 && (
-          <div className="flex-1 flex flex-col justify-start min-h-0 space-y-0.5 animate-slide-up pt-1">
-             <div className="flex items-center justify-between px-2 shrink-0 pb-0.5">
-                <button onClick={goPrevMonth} aria-label="Previous month" className="w-8 h-8 flex items-center justify-center hover:bg-white/10 rounded-xl transition-colors border border-white/10">
-                  <ChevronLeft className="w-4 h-4 text-slate-200" />
+          <div className="flex-1 flex flex-col justify-start sm:justify-center min-h-0 animate-slide-up pt-0 sm:pt-1">
+             <div className="flex items-center justify-between px-1 shrink-0 pb-0 mt-3 mb-2 sm:mt-0 sm:mb-4">
+                <button onClick={goPrevMonth} aria-label="Previous month" className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center hover:bg-white/10 rounded-xl transition-colors border border-white/10">
+                  <ChevronLeft className="w-4 h-3.5 sm:w-5 sm:h-5 text-slate-200" />
                 </button>
                 <div className="text-center">
-                   <p className="text-[8px] font-black text-accent-primary uppercase tracking-[0.2em] mb-0.5">Calendar</p>
-                   <span className="text-base font-black text-white tracking-tighter">{monthLabel}</span>
+                   <p className="text-[8px] sm:text-[10px] font-black text-accent-primary uppercase tracking-[0.2em] mb-0">Calendar</p>
+                   <span className="text-[14px] sm:text-lg font-black text-white tracking-tighter">{monthLabel}</span>
                 </div>
-                <button onClick={goNextMonth} aria-label="Next month" className="w-8 h-8 flex items-center justify-center hover:bg-white/10 rounded-xl transition-colors border border-white/10">
-                   <ChevronRight className="w-4 h-4 text-slate-200" />
+                <button onClick={goNextMonth} aria-label="Next month" className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center hover:bg-white/10 rounded-xl transition-colors border border-white/10">
+                   <ChevronRight className="w-4 h-3.5 sm:w-5 sm:h-5 text-slate-200" />
                 </button>
              </div>
 
-             <div className="calendar-grid grid grid-cols-7 gap-x-1 gap-y-0.5 flex-1">
+             <div className="calendar-grid grid grid-cols-7 grid-rows-6 gap-x-1 sm:gap-x-2 gap-y-1 sm:gap-y-0.5 flex-1 mt-0 pb-2 min-h-0 sm:h-auto sm:flex-none">
                 {WEEKDAYS.map(day => (
-                  <div key={day} className="text-[8px] font-black text-slate-400 tracking-widest text-center py-0.5 opacity-90">{day}</div>
+                  <div key={day} className="text-[6px] sm:text-[10px] font-black text-slate-400 tracking-widest text-center py-0 opacity-70">{day}</div>
                 ))}
                 {days.map((day, i) => {
                   if (day === null) return <div key={`empty-${i}`} />;
@@ -215,8 +213,8 @@ export default function BookingCalendarWidget() {
                       disabled={isPast}
                       onClick={() => handleDateClick(day)}
                       className={`
-                        w-full aspect-[1/0.7] rounded-lg text-xs font-black flex flex-col items-center justify-center transition-all duration-300 relative
-                        ${isSelected ? "bg-accent-primary text-white shadow-[0_0_12px_rgba(79,70,229,0.3)] scale-105 z-10" : "text-slate-100 hover:bg-white/10 hover:text-white"}
+                        w-full aspect-[1/0.85] sm:aspect-[1/0.7] rounded-lg sm:rounded-xl text-[11px] sm:text-base font-black flex flex-col items-center justify-center transition-all duration-300 relative
+                        ${isSelected ? "bg-accent-primary text-white shadow-[0_0_8px_rgba(79,70,229,0.35)] scale-105 z-10" : "text-slate-100 hover:bg-white/10 hover:text-white"}
                         ${isPast ? "text-slate-500 opacity-50 pointer-events-none" : ""}
                         ${isToday && !isSelected ? "border-2 border-accent-primary/40" : ""}
                       `}
@@ -304,16 +302,16 @@ export default function BookingCalendarWidget() {
       </div>
 
       {/* FOOTER - FIXED HEIGHT, ALWAYS VISIBLE */}
-      <div className="shrink-0 p-6 bg-[#0F172A]/98 backdrop-blur-2xl border-t border-white/5 z-20 shadow-[0_-15px_40px_-15px_rgba(0,0,0,0.5)] flex flex-col gap-4">
+      <div className="shrink-0 p-3 sm:p-6 pt-1 bg-[#0F172A]/98 backdrop-blur-2xl border-t border-white/5 z-20 shadow-[0_-15px_40px_-15px_rgba(0,0,0,0.5)] flex flex-col gap-1.5 sm:gap-4">
           
           {/* Timezone Selector - Fixed above button in Step 1 */}
           {step === 1 && (
-            <div className="flex items-center gap-3 px-4 py-3 bg-white/[0.05] rounded-xl border border-white/10 shadow-inner group">
-              <Globe className="w-4 h-4 text-accent-primary group-hover:scale-110 transition-transform" />
+            <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-1.5 sm:py-4 bg-white/[0.05] rounded-xl sm:rounded-2xl border border-white/10 shadow-inner group">
+              <Globe className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-accent-primary group-hover:scale-110 transition-transform" />
               <select 
                 value={timezone}
                 onChange={(e) => setTimezone(e.target.value)}
-                className="bg-transparent text-[10px] font-black text-slate-200 uppercase tracking-[0.15em] focus:ring-0 focus:outline-none flex-1 cursor-pointer"
+                className="bg-transparent text-[8px] sm:text-[11px] font-black text-slate-200 uppercase tracking-[0.1em] sm:tracking-[0.2em] focus:ring-0 focus:outline-none flex-1 cursor-pointer"
               >
                 {TIMEZONES.map(tz => (
                   <option key={tz} value={tz} className="bg-[#0F172A] text-white">
@@ -324,7 +322,7 @@ export default function BookingCalendarWidget() {
             </div>
           )}
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col">
             {step < 3 ? (
               <button
                 onClick={() => {
@@ -332,20 +330,20 @@ export default function BookingCalendarWidget() {
                   else if (step === 2 && selectedTime) setStep(3);
                 }}
                 disabled={(step === 1 && !selectedDate) || (step === 2 && !selectedTime)}
-                className="w-full bg-accent-primary text-white py-4 rounded-xl font-black text-[12px] tracking-[0.25em] uppercase shadow-[0_0_20px_rgba(79,70,229,0.35)] flex items-center justify-center gap-3 active:scale-95 transition-all hover:brightness-110 disabled:bg-white/10 disabled:text-slate-500 disabled:shadow-none disabled:hover:brightness-100"
+                className="w-full bg-accent-primary text-white py-3 sm:py-5 rounded-xl sm:rounded-2xl font-black text-[11px] sm:text-sm tracking-[0.2em] uppercase shadow-[0_0_20px_rgba(79,70,229,0.3)] flex items-center justify-center gap-2 sm:gap-3 active:scale-95 transition-all hover:brightness-110 disabled:bg-white/10 disabled:text-slate-500 disabled:shadow-none disabled:hover:brightness-100"
               >
                 Continue
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-4 h-4 sm:w-6 sm:h-6" />
               </button>
             ) : (
               <button
                 type="button"
                 onClick={() => handleSubmit()}
                 disabled={submitting || !isFormComplete}
-                className="w-full bg-accent-primary text-white py-4 rounded-xl font-black text-[12px] tracking-[0.25em] uppercase shadow-[0_0_20px_rgba(79,70,229,0.35)] flex items-center justify-center gap-3 active:scale-95 transition-all hover:brightness-110 disabled:bg-white/10 disabled:text-slate-500 disabled:shadow-none disabled:hover:brightness-100"
+                className="w-full bg-accent-primary text-white py-3 sm:py-5 rounded-xl sm:rounded-2xl font-black text-[11px] sm:text-sm tracking-[0.2em] uppercase shadow-[0_0_20px_rgba(79,70,229,0.3)] flex items-center justify-center gap-2 sm:gap-3 active:scale-95 transition-all hover:brightness-110 disabled:bg-white/10 disabled:text-slate-500 disabled:shadow-none disabled:hover:brightness-100"
               >
                 {submitting ? "Booking..." : "Complete"}
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-4 h-4 sm:w-6 sm:h-6" />
               </button>
             )}
           </div>
@@ -354,19 +352,16 @@ export default function BookingCalendarWidget() {
 
       <style jsx>{`
         .calendar-grid {
-          transform: scale(0.95);
+          transform-origin: top center;
           transition: transform 0.3s ease;
         }
-        @media (max-height: 700px) {
-          .calendar-grid {
-            transform: scale(0.85);
-          }
-        }
-        @media (max-height: 600px) {
-          .calendar-grid {
-            transform: scale(0.75);
-          }
-        }
+        @media (max-height: 800px) { .calendar-grid { transform: scale(0.98); } }
+        @media (max-height: 750px) { .calendar-grid { transform: scale(0.93); } }
+        @media (max-height: 700px) { .calendar-grid { transform: scale(0.88); } }
+        @media (max-height: 650px) { .calendar-grid { transform: scale(0.83); } }
+        @media (max-height: 600px) { .calendar-grid { transform: scale(0.78); } }
+        @media (max-height: 550px) { .calendar-grid { transform: scale(0.73); } }
+        @media (max-height: 500px) { .calendar-grid { transform: scale(0.68); } }
       `}</style>
     </div>
   );

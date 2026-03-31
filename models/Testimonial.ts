@@ -30,6 +30,10 @@ const testimonialSchema = new mongoose.Schema({
     trim: true,
     // Store Cloudinary URL for the person's profile image
   },
+  isActive: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

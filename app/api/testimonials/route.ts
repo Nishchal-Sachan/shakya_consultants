@@ -6,10 +6,15 @@ import { verifyAuth } from '@/lib/auth';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     await dbConnect();
-    const testimonials = await Testimonial.find({}).sort({ createdAt: -1 });
+    
+    // Check if requester is admin
+    const decoded = await verifyAuth(req).catch(() => null);
+    const query = decoded ? {} : { isActive: true };
+
+    const testimonials = await Testimonial.find(query).sort({ createdAt: -1 });
     return NextResponse.json({ success: true, data: testimonials }, { status: 200 });
   } catch (error: any) {
     console.error('GET /api/testimonials ERROR:', error);
@@ -23,11 +28,9 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    // Authenticate (Assumed admin action for curating testimonials)
-    const decoded = await verifyAuth(req);
-    if (!decoded) {
-      return NextResponse.json({ success: false, error: 'Unauthorized: Invalid token' }, { status: 401 });
-    }
+    // Check if requester is admin
+    const decoded = await verifyAuth(req).catch(() => null);
+    const isAdmin = !!decoded;
 
     await dbConnect();
     const formData = await req.formData();
@@ -70,9 +73,14 @@ export async function POST(req: Request) {
       company,
       rating,
       imageUrl,
+      isActive: isAdmin, // Only immediately active if added by admin
     });
 
-    return NextResponse.json({ success: true, data: testimonial }, { status: 201 });
+    return NextResponse.json({ 
+        success: true, 
+        data: testimonial,
+        message: isAdmin ? 'Testimonial created successfully' : 'Testimonial submitted for review'
+    }, { status: 201 });
   } catch (error: any) {
     console.error('POST /api/testimonials ERROR:', error);
     return NextResponse.json({ 
