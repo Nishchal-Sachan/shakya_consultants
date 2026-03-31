@@ -138,12 +138,12 @@ export default function FullScreenBookingModal() {
       {/* Content — fade + slight scale; focus trap container */}
       <div
         ref={contentRef}
-        className={`relative z-[10000] flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden pt-14 pb-4 px-2 sm:px-4 flex justify-center transition-all duration-200 ease-out ${showContent ? "opacity-100 scale-100" : "opacity-0 scale-[0.98]"}`}
+        className={`relative z-[10000] flex-1 min-h-0 w-full overflow-hidden flex flex-col items-center justify-center transition-all duration-200 ease-out ${showContent ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <BookingCard variant="modal">
+        <div className="w-full h-full sm:h-auto sm:max-h-[90vh] max-w-[500px] px-0 sm:px-0 flex flex-col overflow-hidden bg-[#0F172A] rounded-none sm:rounded-[2rem] shadow-2xl">
           <BookingCalendarWidget />
-        </BookingCard>
+        </div>
       </div>
     </div>
   );

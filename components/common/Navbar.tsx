@@ -143,10 +143,17 @@ export default function Navbar() {
             <Link
               href="/#hero"
               onClick={(e) => handleSmoothScroll(e, "#hero")}
-
-              className="flex items-center focus:outline-none rounded-md text-lg text-text-primary space-x-2"
+              className="flex items-center gap-4 focus:outline-none rounded-md"
             >
-              <div className="text-xl font-bold tracking-tighter shrink-0 flex items-center h-10 w-auto">
+              <Image
+                src="/assets/logo.png"
+                alt="Shakya Consultants"
+                width={42}
+                height={42}
+                className="w-10.5 h-10.5 object-contain"
+                priority
+              />
+              <div className="text-2xl font-bold tracking-tighter shrink-0 flex items-center">
                 <span className="text-accent-primary mr-1">Shakya</span> <span className="text-text-primary">Consultants</span>
               </div>
             </Link>
@@ -242,9 +249,16 @@ export default function Navbar() {
                   handleSmoothScroll(e, "#hero");
                   closeMobileMenu();
                 }}
-                className="flex items-center text-accent-primary space-x-2 focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-2 focus:ring-offset-bg-base rounded-md"
+                className="flex items-center gap-4 focus:outline-none rounded-md"
               >
-                <div className="text-2xl font-bold tracking-tighter shrink-0 text-text-primary">
+                <Image
+                  src="/assets/logo.png"
+                  alt="Shakya Consultants"
+                  width={48}
+                  height={48}
+                  className="w-12 h-12 object-contain"
+                />
+                <div className="text-3xl font-bold tracking-tighter shrink-0 text-text-primary">
                   <span className="text-accent-primary">Shakya</span> <span className="text-text-primary">Consultants</span>
                 </div>
               </a>

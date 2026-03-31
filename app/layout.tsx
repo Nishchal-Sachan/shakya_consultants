@@ -15,6 +15,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Shakya Consultants",
   description: "Professional SaaS Agency Website",
+  icons: {
+    icon: "/assets/logo.png",
+    apple: "/assets/logo.png",
+  },
 };
 
 export default function RootLayout({

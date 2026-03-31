@@ -151,12 +151,13 @@ export default function BookingCalendarWidget() {
     <div className="flex flex-col w-full h-full bg-[#0F172A] relative overflow-hidden">
       
       {/* UNIVERSAL STEP HEADER (IDENTICAL MOBILE/DESKTOP) */}
-      <div className="shrink-0 border-b border-white/5 bg-[#0F172A] relative z-40 px-6 pt-10 pb-6">
+      <div className="shrink-0 border-b border-white/5 bg-[#0F172A] relative z-40 px-6 pt-4 pb-3">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-4">
             {step > 1 && (
               <button 
                 onClick={() => setStep(step - 1)}
+                aria-label="Go back to previous step"
                 className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white active:scale-90 transition-all hover:bg-white/10"
               >
                 <ChevronLeft className="w-5 h-5" />
@@ -176,31 +177,30 @@ export default function BookingCalendarWidget() {
         </div>
       </div>
 
-      {/* VIEWPORT WITH INDEPENDENT SCROLL */}
+      {/* MAIN CONTENT AREA - FLEXIBLE AND CENTERED */}
       <div 
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto px-6 py-8 pb-32 animate-fade-in relative z-10"
+        className="flex-1 min-h-0 px-6 py-4 animate-fade-in relative z-10 flex flex-col justify-center overflow-hidden"
       >
         
         {/* STEP 1: DATE */}
         {step === 1 && (
-          <div className="space-y-10 animate-slide-up">
-             <div className="flex items-center justify-between px-2">
-                <button onClick={goPrevMonth} className="w-10 h-10 flex items-center justify-center hover:bg-white/5 rounded-2xl transition-colors border border-white/10">
-                  <ChevronLeft className="w-5 h-5 text-slate-400" />
+          <div className="flex-1 flex flex-col justify-start min-h-0 space-y-0.5 animate-slide-up pt-1">
+             <div className="flex items-center justify-between px-2 shrink-0 pb-0.5">
+                <button onClick={goPrevMonth} aria-label="Previous month" className="w-8 h-8 flex items-center justify-center hover:bg-white/10 rounded-xl transition-colors border border-white/10">
+                  <ChevronLeft className="w-4 h-4 text-slate-200" />
                 </button>
                 <div className="text-center">
-                   <p className="text-[10px] font-black text-accent-primary uppercase tracking-[0.25em] mb-1">Calendar</p>
-                   <span className="text-lg font-black text-white tracking-tighter">{monthLabel}</span>
+                   <p className="text-[8px] font-black text-accent-primary uppercase tracking-[0.2em] mb-0.5">Calendar</p>
+                   <span className="text-base font-black text-white tracking-tighter">{monthLabel}</span>
                 </div>
-                <button onClick={goNextMonth} className="w-10 h-10 flex items-center justify-center hover:bg-white/5 rounded-2xl transition-colors border border-white/10">
-                   <ChevronRight className="w-5 h-5 text-slate-400" />
+                <button onClick={goNextMonth} aria-label="Next month" className="w-8 h-8 flex items-center justify-center hover:bg-white/10 rounded-xl transition-colors border border-white/10">
+                   <ChevronRight className="w-4 h-4 text-slate-200" />
                 </button>
              </div>
 
-             <div className="grid grid-cols-7 gap-2">
+             <div className="calendar-grid grid grid-cols-7 gap-x-1 gap-y-0.5 flex-1">
                 {WEEKDAYS.map(day => (
-                  <div key={day} className="text-[10px] font-black text-slate-500 tracking-widest text-center py-2 opacity-40">{day}</div>
+                  <div key={day} className="text-[8px] font-black text-slate-400 tracking-widest text-center py-0.5 opacity-90">{day}</div>
                 ))}
                 {days.map((day, i) => {
                   if (day === null) return <div key={`empty-${i}`} />;
@@ -215,9 +215,9 @@ export default function BookingCalendarWidget() {
                       disabled={isPast}
                       onClick={() => handleDateClick(day)}
                       className={`
-                        aspect-square rounded-2xl text-sm font-black flex flex-col items-center justify-center transition-all duration-300 relative
-                        ${isSelected ? "bg-accent-primary text-white shadow-[0_0_20px_rgba(79,70,229,0.4)] scale-110 z-10" : "text-slate-300 hover:bg-white/5"}
-                        ${isPast ? "opacity-[0.1] pointer-events-none" : ""}
+                        w-full aspect-[1/0.7] rounded-lg text-xs font-black flex flex-col items-center justify-center transition-all duration-300 relative
+                        ${isSelected ? "bg-accent-primary text-white shadow-[0_0_12px_rgba(79,70,229,0.3)] scale-105 z-10" : "text-slate-100 hover:bg-white/10 hover:text-white"}
+                        ${isPast ? "text-slate-500 opacity-50 pointer-events-none" : ""}
                         ${isToday && !isSelected ? "border-2 border-accent-primary/40" : ""}
                       `}
                     >
@@ -227,44 +227,31 @@ export default function BookingCalendarWidget() {
                   );
                 })}
              </div>
-
-             <div className="flex items-center gap-4 px-6 py-5 bg-white/5 rounded-2xl border border-white/5">
-                <Globe className="w-5 h-5 text-accent-primary" />
-                <select 
-                  value={timezone}
-                  onChange={(e) => setTimezone(e.target.value)}
-                  className="bg-transparent text-[11px] font-black text-white uppercase tracking-widest focus:ring-0 focus:outline-none flex-1 truncate"
-                >
-                  {TIMEZONES.map(tz => (
-                    <option key={tz} value={tz} className="bg-[#0F172A] text-white">{tz.split("/")[1].replace("_", " ")}</option>
-                  ))}
-                </select>
-             </div>
           </div>
         )}
 
         {/* STEP 2: TIME */}
         {step === 2 && (
-          <div className="space-y-10 animate-slide-up">
-             <div className="flex items-center gap-4 px-2">
-                <div className="w-10 h-10 rounded-xl bg-accent-primary/20 flex items-center justify-center">
-                   <Clock className="w-5 h-5 text-accent-primary" />
+          <div className="flex-1 flex flex-col justify-center space-y-6 animate-slide-up">
+             <div className="flex items-center gap-3 px-2">
+                <div className="w-9 h-9 rounded-xl bg-accent-primary/20 flex items-center justify-center">
+                   <Clock className="w-4 h-4 text-accent-primary" />
                 </div>
                 <div>
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em]">Schedule Time</p>
-                   <p className="text-lg font-black text-white tracking-tighter">{selectedDate?.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Schedule Time</p>
+                   <p className="text-base font-black text-white tracking-tighter">{selectedDate?.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</p>
                 </div>
              </div>
 
-             <div className="grid grid-cols-2 gap-4">
-                {timeSlots.map(slot => (
+             <div className="grid grid-cols-2 gap-3 overflow-hidden">
+                {timeSlots.slice(0, 8).map(slot => (
                   <button
                     key={slot}
                     onClick={() => handleTimeSelect(slot)}
                     className={`
-                      p-5 rounded-2xl text-base font-black border transition-all duration-400 text-center
+                      p-4 rounded-xl text-sm font-black border transition-all duration-400 text-center
                       ${selectedTime === slot 
-                        ? "bg-accent-primary text-white border-transparent shadow-[0_0_20px_rgba(79,70,229,0.4)] scale-[1.03] z-10" 
+                        ? "bg-accent-primary text-white border-transparent shadow-[0_0_15px_rgba(79,70,229,0.3)] scale-[1.03] z-10" 
                         : "bg-white/5 border-white/10 text-slate-300 hover:border-accent-primary/50 hover:bg-white/10"}
                     `}
                   >
@@ -277,72 +264,110 @@ export default function BookingCalendarWidget() {
 
         {/* STEP 3: DETAILS */}
         {step === 3 && (
-          <div className="space-y-10 animate-slide-up">
-             <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 p-8 rounded-[2.5rem] border border-white/10 relative">
-                <p className="text-[11px] font-black text-accent-primary uppercase tracking-[0.25em] mb-4">You&apos;re scheduling for</p>
-                <div className="space-y-1">
-                   <p className="text-xl font-black text-white tracking-tighter">{selectedDate?.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-                   <p className="text-lg font-black text-accent-primary">{selectedTime}</p>
+          <div className="flex-1 flex flex-col justify-center space-y-6 animate-slide-up">
+             <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 p-6 rounded-3xl border border-white/10 relative">
+                <p className="text-[10px] font-black text-accent-primary uppercase tracking-[0.2em] mb-2">You&apos;re scheduling for</p>
+                <div className="space-y-0.5">
+                   <p className="text-lg font-black text-white tracking-tighter">{selectedDate?.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+                   <p className="text-base font-black text-accent-primary">{selectedTime}</p>
                 </div>
              </div>
 
-             <div className="space-y-6">
-                <div className="space-y-2 px-1">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Full Name</label>
+             <div className="space-y-4">
+                <div className="space-y-1.5 px-1">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Full Name</label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 p-5 rounded-3xl font-black text-white text-lg focus:ring-4 focus:ring-accent-primary/10 focus:border-accent-primary transition-all outline-none"
+                    className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl font-black text-white text-base focus:ring-4 focus:ring-accent-primary/10 focus:border-accent-primary transition-all outline-none"
                     placeholder="E.g. John Doe"
                   />
                 </div>
-                <div className="space-y-2 px-1">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Work Email</label>
+                <div className="space-y-1.5 px-1">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Work Email</label>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 p-5 rounded-3xl font-black text-white text-lg focus:ring-4 focus:ring-accent-primary/10 focus:border-accent-primary transition-all outline-none"
+                    className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl font-black text-white text-base focus:ring-4 focus:ring-accent-primary/10 focus:border-accent-primary transition-all outline-none"
                     placeholder="john@company.com"
                   />
                 </div>
-                {submitError && <p className="text-[10px] font-black text-red-400 uppercase tracking-widest px-2">{submitError}</p>}
+                {submitError && <p className="text-[9px] font-black text-red-400 uppercase tracking-widest px-2">{submitError}</p>}
              </div>
           </div>
         )}
 
       </div>
 
-      {/* UNIVERSAL STICKY BOTTOM NAV BAR (IDENTICAL MOBILE/DESKTOP) */}
-      <div className="absolute inset-x-0 bottom-0 p-6 bg-[#0F172A]/95 backdrop-blur-2xl border-t border-white/5 z-50 shadow-[0_-20px_50px_-20px_rgba(0,0,0,0.5)]">
-          {step < 3 ? (
-            <button
-              onClick={() => {
-                if (step === 1 && selectedDate) setStep(2);
-                else if (step === 2 && selectedTime) setStep(3);
-              }}
-              disabled={(step === 1 && !selectedDate) || (step === 2 && !selectedTime)}
-              className="w-full bg-accent-primary text-white py-6 rounded-[2rem] font-black text-sm tracking-[0.3em] uppercase shadow-[0_0_30px_rgba(79,70,229,0.4)] flex items-center justify-center gap-4 active:scale-95 transition-all disabled:opacity-30 disabled:grayscale hover:brightness-110"
-            >
-              Continue
-              <ArrowRight className="w-6 h-6" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => handleSubmit()}
-              disabled={submitting || !isFormComplete}
-              className="w-full bg-accent-primary text-white py-6 rounded-[2rem] font-black text-sm tracking-[0.3em] uppercase shadow-[0_0_30px_rgba(79,70,229,0.4)] flex items-center justify-center gap-4 active:scale-95 transition-all disabled:opacity-30 disabled:grayscale hover:brightness-110"
-            >
-              {submitting ? "Booking..." : "Complete Booking"}
-              <ArrowRight className="w-6 h-6" />
-            </button>
+      {/* FOOTER - FIXED HEIGHT, ALWAYS VISIBLE */}
+      <div className="shrink-0 p-6 bg-[#0F172A]/98 backdrop-blur-2xl border-t border-white/5 z-20 shadow-[0_-15px_40px_-15px_rgba(0,0,0,0.5)] flex flex-col gap-4">
+          
+          {/* Timezone Selector - Fixed above button in Step 1 */}
+          {step === 1 && (
+            <div className="flex items-center gap-3 px-4 py-3 bg-white/[0.05] rounded-xl border border-white/10 shadow-inner group">
+              <Globe className="w-4 h-4 text-accent-primary group-hover:scale-110 transition-transform" />
+              <select 
+                value={timezone}
+                onChange={(e) => setTimezone(e.target.value)}
+                className="bg-transparent text-[10px] font-black text-slate-200 uppercase tracking-[0.15em] focus:ring-0 focus:outline-none flex-1 cursor-pointer"
+              >
+                {TIMEZONES.map(tz => (
+                  <option key={tz} value={tz} className="bg-[#0F172A] text-white">
+                    {tz.split("/").length > 1 ? tz.split("/")[1].replace("_", " ") : tz}
+                  </option>
+                ))}
+              </select>
+            </div>
           )}
+
+          <div className="flex flex-col gap-3">
+            {step < 3 ? (
+              <button
+                onClick={() => {
+                  if (step === 1 && selectedDate) setStep(2);
+                  else if (step === 2 && selectedTime) setStep(3);
+                }}
+                disabled={(step === 1 && !selectedDate) || (step === 2 && !selectedTime)}
+                className="w-full bg-accent-primary text-white py-4 rounded-xl font-black text-[12px] tracking-[0.25em] uppercase shadow-[0_0_20px_rgba(79,70,229,0.35)] flex items-center justify-center gap-3 active:scale-95 transition-all hover:brightness-110 disabled:bg-white/10 disabled:text-slate-500 disabled:shadow-none disabled:hover:brightness-100"
+              >
+                Continue
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => handleSubmit()}
+                disabled={submitting || !isFormComplete}
+                className="w-full bg-accent-primary text-white py-4 rounded-xl font-black text-[12px] tracking-[0.25em] uppercase shadow-[0_0_20px_rgba(79,70,229,0.35)] flex items-center justify-center gap-3 active:scale-95 transition-all hover:brightness-110 disabled:bg-white/10 disabled:text-slate-500 disabled:shadow-none disabled:hover:brightness-100"
+              >
+                {submitting ? "Booking..." : "Complete"}
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            )}
+          </div>
       </div>
 
+
+      <style jsx>{`
+        .calendar-grid {
+          transform: scale(0.95);
+          transition: transform 0.3s ease;
+        }
+        @media (max-height: 700px) {
+          .calendar-grid {
+            transform: scale(0.85);
+          }
+        }
+        @media (max-height: 600px) {
+          .calendar-grid {
+            transform: scale(0.75);
+          }
+        }
+      `}</style>
     </div>
   );
 }

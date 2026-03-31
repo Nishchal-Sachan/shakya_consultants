@@ -2,6 +2,7 @@
 
 import { useBookingModal } from "@/context/BookingModalContext";
 import * as Lucide from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -72,12 +73,18 @@ export default function Footer() {
             <div>
               <Link
                 href="/"
-                className="inline-flex items-center gap-3 mb-6 group"
+                className="inline-flex items-center gap-6 mb-12 group"
               >
-                <div className="w-10 h-10 rounded-xl bg-accent-primary flex items-center justify-center shadow-glow-primary transform group-hover:rotate-12 transition-transform duration-500">
-                  <Lucide.Zap className="w-6 h-6 text-white fill-white" />
+                <div className="flex items-center h-16 w-auto shrink-0">
+                  <Image
+                    src="/assets/logo.png"
+                    alt="Shakya Consultants"
+                    width={64}
+                    height={64}
+                    className="h-16 w-auto object-contain brightness-0 invert"
+                  />
                 </div>
-                <div className="text-3xl font-black tracking-tighter text-white">
+                <div className="text-4xl md:text-5xl font-black tracking-tighter text-white">
                   Shakya{" "}
                   <span className="text-accent-primary">Consultants</span>
                 </div>
